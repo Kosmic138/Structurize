@@ -20,7 +20,7 @@ import java.util.List;
  */
 @SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820",})
 
-public final class ModBlocks
+public final class  ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.

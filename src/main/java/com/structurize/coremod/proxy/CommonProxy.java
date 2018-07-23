@@ -1,5 +1,6 @@
 package com.structurize.coremod.proxy;
 
+import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.constant.Constants;
 import com.structurize.coremod.blocks.ModBlocks;
 import com.structurize.coremod.items.ModItems;
@@ -77,7 +78,10 @@ public class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        ModBlocks.init(event.getRegistry());
+        if (Configurations.gameplay.decorativeBlocksEnabled)
+        {
+            ModBlocks.init(event.getRegistry());
+        }
     }
 
     /**
@@ -90,7 +94,10 @@ public class CommonProxy implements IProxy
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
         ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
+        if (Configurations.gameplay.decorativeBlocksEnabled)
+        {
+            ModBlocks.registerItemBlock(event.getRegistry());
+        }
     }
 
     @Override

@@ -26,5 +26,8 @@ public class Configurations
 
         @Config.Comment("Max world operations per tick (Max blocks to place, remove or replace)")
         public int maxOperationsPerTick = 100;
+
+        @Config.Comment("Whether the decorative blocks added by this util are enabled or not")
+        public boolean decorativeBlocksEnabled = true;
      }
 }
