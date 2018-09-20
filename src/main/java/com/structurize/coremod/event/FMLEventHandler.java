@@ -24,7 +24,6 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static com.structurize.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
@@ -71,7 +70,6 @@ public class FMLEventHandler
     @SubscribeEvent
     public void missingMapping(@NotNull final RegistryEvent.MissingMappings<Block> event)
     {
-        final IForgeRegistry registry = event.getRegistry();
         event.getAllMappings().forEach((mapping) -> {
             if(mapping.key.toString().contains(Constants.MINECOLONIES_MOD_ID))
             {

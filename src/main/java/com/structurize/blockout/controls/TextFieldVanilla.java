@@ -110,29 +110,6 @@ public class TextFieldVanilla extends TextField
         super.handleClick(mouseX, my);
     }
 
-    private static class FilterNumeric implements Filter
-    {
-        @Override
-        public String filter(final String s)
-        {
-            final StringBuilder sb = new StringBuilder();
-            for (final char c : s.toCharArray())
-            {
-                if (isAllowedCharacter(c))
-                {
-                    sb.append(c);
-                }
-            }
-            return sb.toString();
-        }
-
-        @Override
-        public boolean isAllowedCharacter(final char c)
-        {
-            return Character.isDigit(c);
-        }
-    }
-
     private static class FilterVanilla implements Filter
     {
         @Override

@@ -48,11 +48,6 @@ public class WindowScan extends AbstractWindowSkeleton
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowscantool.xml";
 
     /**
-     * Id of clicking enter.
-     */
-    private static final int ENTER_KEY = 28;
-
-    /**
      * Contains all resources needed for a certain build.
      */
     private final Map<String, ItemStorage> resources = new HashMap<>();
@@ -324,11 +319,6 @@ public class WindowScan extends AbstractWindowSkeleton
                         {
                             entities.put(entity.getName(), entity);
                         }
-                    }
-
-                    if (here == null)
-                    {
-                        continue;
                     }
 
                     @Nullable final Block block = blockState.getBlock();

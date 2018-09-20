@@ -1,9 +1,7 @@
 package com.structurize.coremod.event;
 
 import com.structurize.structures.helpers.Settings;
-import com.structurize.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,9 +25,6 @@ public class ClientEventHandler
     @SubscribeEvent
     public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-
-        final Structure structure = Settings.instance.getActiveStructure();
-        final WorldClient world = Minecraft.getMinecraft().world;
         final EntityPlayer player = Minecraft.getMinecraft().player;
 
         if (Settings.instance.getBox() != null)

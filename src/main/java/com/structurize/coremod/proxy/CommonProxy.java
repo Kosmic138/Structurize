@@ -33,16 +33,9 @@ import java.util.Map;
 public class CommonProxy implements IProxy
 {
     /**
-     * feel free to change the following if you want different colored spawn eggs
-     */
-    private static final int PRIMARY_COLOR   = 5;
-    private static final int SECONDARY_COLOR = 700;
-
-    /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
-    private              int                         nextEntityId         = 0;
 
     /**
      * Adds an entity's custom data to the map for temporary storage.

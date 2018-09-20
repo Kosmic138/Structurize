@@ -193,7 +193,6 @@ public class WindowShapeTool extends AbstractWindowSkeleton
             genShape();
         }
 
-        final Button replaceButton = findPaneOfTypeByID(BUTTON_HOLLOW, Button.class);
         findPaneOfTypeByID(BUTTON_HOLLOW, Button.class).setLabel(Settings.instance.isHollow() ? LanguageHandler.format("com.structurize.coremod.gui.shapeTool.hollow") : LanguageHandler.format("com.structurize.coremod.gui.shapeTool.solid"));
     }
 
