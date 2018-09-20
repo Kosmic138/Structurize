@@ -3,7 +3,7 @@ package com.structurize.coremod;
 import com.structurize.api.util.constant.Constants;
 import com.structurize.coremod.event.FMLEventHandler;
 import com.structurize.coremod.network.messages.*;
-import com.structurize.coremod.placementhandlers.CopyPastePlacementHandlers;
+import com.structurize.coremod.placementhandlers.StructurizePlacementHandlers;
 import com.structurize.coremod.proxy.IProxy;
 import com.structurize.structures.helpers.Structure;
 import net.minecraftforge.common.MinecraftForge;
@@ -117,7 +117,7 @@ public class Structurize
 
         proxy.registerRenderer();
 
-        CopyPastePlacementHandlers.initHandlers();
+        StructurizePlacementHandlers.initHandlers();
     }
 
     private static synchronized void initializeNetwork()

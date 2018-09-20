@@ -14,20 +14,12 @@ buildscript {
 }
 
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.0.9"
+    id "com.matthewprenger.cursegradle" version "1.1.0"
 }
 repositories {
     maven {
-        name 'DVS1 Maven FS'
-        url 'http://dvs1.progwml6.com/files/maven'
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "modmaven.k-4u.nl"
-    }
-    maven {
-        url 'http://dogforce-games.com/maven'
+        name 'LDTTeam - Modding'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
 }
 
@@ -50,6 +42,7 @@ configFile.withReader {
 }
 
 dependencies {
+    deobfCompile "com.ldtteam:blockout:${config.minecraft_version}-${config.blockout_version}"
     compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
 
     testCompile 'junit:junit:4.11'

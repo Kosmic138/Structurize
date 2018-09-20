@@ -22,17 +22,17 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" de
     echo $JAR_FILE
     mkdir mods
     cp $JAR_FILE mods/$JAR_FILE
-    zip -r copy_paste.zip mods
-    echo $(unzip -l copy_paste.zip)
+    zip -r structurize.zip mods
+    echo $(unzip -l structurize.zip)
     
     JAR_VERSION=$(echo $JAR_FILE | cut -d'-' -f4 | rev | cut -c5- | rev)
     echo $JAR_VERSION
     
-    ZIP_NAME=copy_paste-$JAR_VERSION.zip
+    ZIP_NAME=structurize-$JAR_VERSION.zip
     
-    mv copy_paste.zip $ZIP_NAME
+    mv structurize.zip $ZIP_NAME
     
-    curl -T $ZIP_NAME -u $SOLDER_USER:$SOLDER_PASS $SOLDER_FTP/copy_paste/
+    curl -T $ZIP_NAME -u $SOLDER_USER:$SOLDER_PASS $SOLDER_FTP/structurize/
     
     curl -sL -w "Login CODE: %{http_code}\\n" -c cookies.txt \
         -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL/login -o /dev/null
@@ -59,7 +59,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" de
         
     echo Created Modpack Version: $MODPACK_VERSION
     
-    MODVERSION_ID=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/build/$MODPACK_VERSION | awk '/(copy_paste)/,/Forge/' | grep modversion_id | head -n 1 | cut -d'"' -f8)
+    MODVERSION_ID=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/build/$MODPACK_VERSION | awk '/(structurize)/,/Forge/' | grep modversion_id | head -n 1 | cut -d'"' -f8)
 
     echo Modversion ID: $MODVERSION_ID
     

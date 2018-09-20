@@ -22,12 +22,12 @@ import static com.structurize.coremod.placementhandlers.PlacementHandlers.handle
 /**
  * Contains all Structurize specific placement handlers.
  */
-public final class CopyPastePlacementHandlers
+public final class StructurizePlacementHandlers
 {
     /**
      * Private constructor to hide implicit one.
      */
-    private CopyPastePlacementHandlers()
+    private StructurizePlacementHandlers()
     {
         /*
          * Intentionally left empty.

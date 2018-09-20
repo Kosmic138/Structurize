@@ -22,10 +22,10 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"failure",
-      "target_url":"https://travis-ci.org/copy_paste/copy_paste/builds/'$TRAVIS_BUILD_ID'",
+      "target_url":"https://travis-ci.org/structurize/structurize/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube build failed, please check logs!",
       "context":"sonarqube"}' \
-      "https://api.github.com/repos/copy_paste/copy_paste/statuses/${TRAVIS_COMMIT}"
+      "https://api.github.com/repos/structurize/structurize/statuses/${TRAVIS_COMMIT}"
   fi
 fi
 
@@ -33,10 +33,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
     --request POST \
     --data '{"state":"pending",
-    "target_url":"https://travis-ci.org/copy_paste/copy_paste/builds/'$TRAVIS_BUILD_ID'",
+    "target_url":"https://travis-ci.org/structurize/structurize/builds/'$TRAVIS_BUILD_ID'",
     "description": "Sonarqube report in progress...",
     "context":"sonarqube-report"}' \
-    "https://api.github.com/repos/copy_paste/copy_paste/statuses/${TRAVIS_COMMIT}"
+    "https://api.github.com/repos/structurize/structurize/statuses/${TRAVIS_COMMIT}"
   ./gradlew test jacocoTestReport sonarqube --stacktrace \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
@@ -51,18 +51,18 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"failure",
-      "target_url":"https://travis-ci.org/copy_paste/copy_paste/builds/'$TRAVIS_BUILD_ID'",
+      "target_url":"https://travis-ci.org/structurize/structurize/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube report failed, please check logs!",
       "context":"sonarqube-report"}' \
-      "https://api.github.com/repos/copy_paste/copy_paste/statuses/${TRAVIS_COMMIT}"
+      "https://api.github.com/repos/structurize/structurize/statuses/${TRAVIS_COMMIT}"
   else
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"success",
-      "target_url":"https://travis-ci.org/copy_paste/copy_paste/builds/'$TRAVIS_BUILD_ID'",
+      "target_url":"https://travis-ci.org/structurize/structurize/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube report passed!",
       "context":"sonarqube-report"}' \
-      "https://api.github.com/repos/copy_paste/copy_paste/statuses/${TRAVIS_COMMIT}"
+      "https://api.github.com/repos/structurize/structurize/statuses/${TRAVIS_COMMIT}"
   fi
 fi
 

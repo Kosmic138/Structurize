@@ -44,14 +44,14 @@ if __name__ == "__main__":
         poe_langs += [lang['code']]
     poe_langs.sort(key = len, reverse = True)
 
-    mc_langs = os.listdir("../../src/main/resources/assets/copy_paste/lang")
+    mc_langs = os.listdir("../../src/main/resources/assets/structurize/lang")
 
     for poe_lang in poe_langs:
         strings = getStrings(poe_lang)
         mc_lang = getMcLang(poe_lang, mc_langs)
         print(poe_lang)
         print(mc_lang)
-        with open("../../src/main/resources/assets/copy_paste/lang/" + mc_lang, 'w') as f:
+        with open("../../src/main/resources/assets/structurize/lang/" + mc_lang, 'w') as f:
             for k,v in strings.items():
                 if isinstance(v, {}):
                     k = next(iter(v))
