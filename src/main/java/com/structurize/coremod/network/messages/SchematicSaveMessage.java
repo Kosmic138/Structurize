@@ -3,7 +3,7 @@ package com.structurize.coremod.network.messages;
 import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.Log;
 import com.structurize.coremod.Structurize;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.Structures;
 import com.structurize.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

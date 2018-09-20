@@ -6,8 +6,8 @@ import com.structurize.blockout.controls.ButtonHandler;
 import com.structurize.blockout.controls.TextField;
 import com.structurize.blockout.views.Window;
 import com.structurize.coremod.Structurize;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.StructureName;
+import com.structurize.coremod.structmanagement.Structures;
 import com.structurize.structures.helpers.Settings;
 import org.jetbrains.annotations.NotNull;
 

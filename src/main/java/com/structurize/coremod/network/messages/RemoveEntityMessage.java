@@ -2,7 +2,7 @@ package com.structurize.coremod.network.messages;
 
 import com.structurize.api.util.BlockPosUtil;
 import com.structurize.api.util.ChangeStorage;
-import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.structmanagement.Manager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;

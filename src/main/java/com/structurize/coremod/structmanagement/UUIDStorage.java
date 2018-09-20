@@ -1,4 +1,4 @@
-package com.structurize.coremod.management;
+package com.structurize.coremod.structmanagement;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldSavedData;

@@ -1,6 +1,6 @@
 package com.structurize.coremod.network.messages;
 
-import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.structmanagement.Manager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

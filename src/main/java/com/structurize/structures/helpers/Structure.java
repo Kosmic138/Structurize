@@ -1,13 +1,13 @@
 package com.structurize.structures.helpers;
 
 import com.structurize.api.util.constant.Constants;
-import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.structmanagement.Manager;
 import com.google.common.collect.ImmutableList;
 import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.Log;
 import com.structurize.coremod.Structurize;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.StructureName;
+import com.structurize.coremod.structmanagement.Structures;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

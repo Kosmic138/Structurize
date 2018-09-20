@@ -1,4 +1,4 @@
-package com.structurize.coremod.management;
+package com.structurize.coremod.structmanagement;
 
 import com.structurize.api.util.LanguageHandler;
 import com.structurize.api.util.constant.Constants;

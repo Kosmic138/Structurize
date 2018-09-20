@@ -75,4 +75,4 @@
 
  Jobs are not mirrored to clients.
 */
-package com.structurize.coremod.management;
+package com.structurize.coremod.structmanagement;

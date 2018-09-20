@@ -11,7 +11,6 @@ import com.structurize.blockout.views.ScrollingList;
 import com.structurize.blockout.views.Window;
 import com.structurize.coremod.Structurize;
 import com.structurize.coremod.network.messages.ReplaceBlockMessage;
-import com.structurize.structures.helpers.Settings;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

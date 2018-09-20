@@ -1,8 +1,8 @@
 package com.structurize.coremod.network.messages;
 
 import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.StructureName;
+import com.structurize.coremod.structmanagement.Structures;
 import com.structurize.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -21,22 +21,23 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook",
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class Structurize
 {
     private static final Logger      logger = LogManager.getLogger(Constants.MOD_ID);
+
     /**
      * Forge created instance of the Mod.
      */
     @Mod.Instance(Constants.MOD_ID)
     public static        Structurize instance;
+
     /**
      * Access to the proxy associated with your current side. Variable updated
      * by forge.
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-
     public static        IProxy      proxy;
 
     private static SimpleNetworkWrapper network;

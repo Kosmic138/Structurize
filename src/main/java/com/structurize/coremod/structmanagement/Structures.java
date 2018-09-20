@@ -1,4 +1,4 @@
-package com.structurize.coremod.management;
+package com.structurize.coremod.structmanagement;
 
 import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.Log;

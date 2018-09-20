@@ -9,7 +9,7 @@ import com.structurize.blockout.controls.Label;
 import com.structurize.blockout.controls.TextField;
 import com.structurize.blockout.views.DropDownList;
 import com.structurize.coremod.Structurize;
-import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.structmanagement.Manager;
 import com.structurize.coremod.network.messages.*;
 import com.structurize.structures.helpers.Settings;
 import com.structurize.structures.helpers.Structure;
