@@ -7,24 +7,22 @@ import static com.structurize.api.util.constant.Constants.*;
 @Config(modid = MOD_ID)
 public class Configurations
 {
-    @Config.Comment("All configuration related to gameplay")
-    public static Gameplay gameplay = new Gameplay();
+    @Config.Comment("Should local schematics be allowed?")
+    public static boolean allowLocalSchematics = true;
 
-    public static class Gameplay
+    @Config.Comment("Max amount of schematics to be cached on the server")
+    public static int maxCachedSchematics = 100;
+
+    @Config.Comment("Max amount of changes cached to be able to undo")
+    public static int maxCachedChanges = 10;
+
+    @Config.Comment("Max world operations per tick (Max blocks to place, remove or replace)")
+    public static int maxOperationsPerTick = 100;
+
+    @Config.Comment("List of repositories of schematics to load from (use \"local:\" for loading schematics from local files")
+    public static String[] repositoriesUrls = new String[]
     {
-        @Config.Comment("Should the default schematics be ignored (from the jar)?")
-        public boolean ignoreSchematicsFromJar = false;
-
-        @Config.Comment("Should player made schematics be allowed")
-        public boolean allowPlayerSchematics = true;
-
-        @Config.Comment("Max amount of schematics to be cached on the server")
-        public int maxCachedSchematics = 100;
-
-        @Config.Comment("Max amount of changes cached to be able to undo")
-        public int maxCachedChanges = 10;
-
-        @Config.Comment("Max world operations per tick (Max blocks to place, remove or replace)")
-        public int maxOperationsPerTick = 100;
-     }
+        "https://raw.githubusercontent.com/Nightenom/minecolonies-schematics-test/",
+        "local:structurize"
+    };
 }

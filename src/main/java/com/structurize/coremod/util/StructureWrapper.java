@@ -222,7 +222,7 @@ public final class StructureWrapper
                         delayedBlocks.add(localPos);
                     }
 
-                    if (count >= Configurations.gameplay.maxOperationsPerTick)
+                    if (count >= Configurations.maxOperationsPerTick)
                     {
                         this.handleDelayedBlocks(delayedBlocks, storage, world);
                         return new BlockPos(x, y, z);
@@ -258,7 +258,7 @@ public final class StructureWrapper
                             Log.getLogger().info("Couldn't restore entitiy", e);
                         }
                     }
-                    if (count >= Configurations.gameplay.maxOperationsPerTick)
+                    if (count >= Configurations.maxOperationsPerTick)
                     {
                         return new BlockPos(x, y, z);
                     }

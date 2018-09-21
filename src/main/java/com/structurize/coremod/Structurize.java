@@ -1,10 +1,13 @@
 package com.structurize.coremod;
 
+import com.structurize.api.util.Log;
 import com.structurize.api.util.constant.Constants;
 import com.structurize.coremod.event.FMLEventHandler;
 import com.structurize.coremod.network.messages.*;
 import com.structurize.coremod.placementhandlers.StructurizePlacementHandlers;
 import com.structurize.coremod.proxy.IProxy;
+import com.structurize.coremod.repomanagement.FileManager;
+import com.structurize.coremod.repomanagement.repostructure.Style;
 import com.structurize.structures.helpers.Structure;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -12,10 +15,13 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +45,11 @@ public class Structurize
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
     public static        IProxy      proxy;
+
+    /**
+     * List of available styles
+     */
+    public static        List<Style> styles;
 
     private static SimpleNetworkWrapper network;
 
@@ -86,8 +97,6 @@ public class Structurize
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         Structure.originFolders.add(Constants.MOD_ID);
-        proxy.registerEntities();
-        proxy.registerEntityRendering();
         proxy.registerEvents();
 
         @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
@@ -110,12 +119,7 @@ public class Structurize
         initializeNetwork();
 
         proxy.registerTileEntities();
-
         proxy.registerEvents();
-
-        proxy.registerTileEntityRendering();
-
-        proxy.registerRenderer();
 
         StructurizePlacementHandlers.initHandlers();
     }
@@ -150,5 +154,18 @@ public class Structurize
     public static SimpleNetworkWrapper getNetwork()
     {
         return network;
+    }
+
+    /**
+     * Event handler for forge post init event.
+     *
+     * @param event the forge post init event.
+     */
+    @Mod.EventHandler
+    public void postInit(final FMLPostInitializationEvent event)
+    {
+        Log.getLogger().info("Loading styles, this may take a while...");
+        styles = FileManager.loadRepositories();
+        Log.getLogger().info("Found " + styles.size() + " style(s).");
     }
 }

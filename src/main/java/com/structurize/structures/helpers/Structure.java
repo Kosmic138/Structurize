@@ -181,12 +181,12 @@ public class Structure
         else if (!Structures.SCHEMATICS_PREFIX.equals(sn.getPrefix()))
         {
             return null;
-        }
+        }/* TODO REMOVE
         else
         {
             //Look in the folder first
             inputstream = Structure.getStreamFromFolder(Structurize.proxy.getSchematicsFolder(), structureName);
-            if (inputstream == null && !Configurations.gameplay.ignoreSchematicsFromJar)
+            if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
                 for (final InputStream stream : Structure.getStreamsFromJar(structureName))
                 {
@@ -196,7 +196,7 @@ public class Structure
                     }
                 }
             }
-        }
+        }*/
 
         return inputstream;
     }

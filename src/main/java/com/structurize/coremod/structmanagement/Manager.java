@@ -93,7 +93,7 @@ public final class Manager
      */
     public static void addToUndoCache(final ChangeStorage storage)
     {
-        if (changeQueue.size() >= Configurations.gameplay.maxCachedChanges)
+        if (changeQueue.size() >= Configurations.maxCachedChanges)
         {
             changeQueue.pop();
         }
@@ -131,7 +131,7 @@ public final class Manager
       final Mirror mirror,
       final int rotation)
     {
-        final Template template = Manager.getStructureFromFormula(width, length, height, frequency, shape, inputBlock, inputFillBlock, hollow);;
+        final Template template = Manager.getStructureFromFormula(width, length, height, frequency, shape, inputBlock, inputFillBlock, hollow);
         StructureWrapper.loadAndPlaceShapeWithRotation(server, template, pos, rotation,mirror, player);
     }
 

@@ -123,7 +123,7 @@ public class ChangeStorage
             blocks.remove(entry.getKey());
             count++;
 
-            if (count >= Configurations.gameplay.maxOperationsPerTick)
+            if (count >= Configurations.maxOperationsPerTick)
             {
                 return false;
             }

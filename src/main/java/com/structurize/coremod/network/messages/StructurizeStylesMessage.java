@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class StructurizeStylesMessage extends AbstractMessage<StructurizeStylesMessage, IMessage>
 {
-    private boolean             allowPlayerSchematics;
+    private boolean             allowLocalSchematics;
     private Map<String, String> md5Map;
 
     /**
@@ -30,7 +30,7 @@ public class StructurizeStylesMessage extends AbstractMessage<StructurizeStylesM
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        allowPlayerSchematics = buf.readBoolean();
+        allowLocalSchematics = buf.readBoolean();
         md5Map = readMD5MapFromByteBuf(buf);
     }
 
@@ -52,7 +52,7 @@ public class StructurizeStylesMessage extends AbstractMessage<StructurizeStylesM
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        buf.writeBoolean(Configurations.gameplay.allowPlayerSchematics);
+        buf.writeBoolean(Configurations.allowLocalSchematics); // TODO: local schematics
         writeMD5MapToByteBuf(buf);
     }
 
@@ -78,7 +78,7 @@ public class StructurizeStylesMessage extends AbstractMessage<StructurizeStylesM
     @Override
     protected void messageOnClientThread(final StructurizeStylesMessage message, final MessageContext ctx)
     {
-        Structures.setAllowPlayerSchematics(message.allowPlayerSchematics);
+        Structures.setAllowPlayerSchematics(message.allowLocalSchematics);
         Structures.setMD5s(message.md5Map);
     }
 }

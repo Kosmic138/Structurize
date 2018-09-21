@@ -101,7 +101,7 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     @Override
     public void messageOnServerThread(final SchematicSaveMessage message, final EntityPlayerMP player)
     {
-        if (!Structurize.isClient() && !Configurations.gameplay.allowPlayerSchematics)
+        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) //TODO: local schematics
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
@@ -139,7 +139,7 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     @Override
     protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx)
     {
-        if (!Structurize.isClient() && !Configurations.gameplay.allowPlayerSchematics)
+        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) //TODO: local schematics
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
         }

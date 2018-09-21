@@ -101,29 +101,10 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEvents()
     {
-
-    }
-
-    @Override
-    public void registerEntities()
-    {
-
-    }
-
-    @Override
-    public void registerEntityRendering()
-    {
         /*
          * Intentionally left empty.
          */
-    }
 
-    @Override
-    public void registerTileEntityRendering()
-    {
-        /*
-         * Intentionally left empty.
-         */
     }
 
     @Override
@@ -168,14 +149,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openClipBoardWindow(final int colonyId)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void registerRenderer()
     {
         /*
          * Intentionally left empty.

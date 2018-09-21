@@ -204,7 +204,7 @@ public class ScanToolOperation
                             BlockUtils.handleCorrectBlockPlacement(world, fakePlayer, secondBlock, blockState, here);
                         }
 
-                        if (count >= Configurations.gameplay.maxOperationsPerTick)
+                        if (count >= Configurations.maxOperationsPerTick)
                         {
                             currentPos = new BlockPos(x, y, z);
                             return false;

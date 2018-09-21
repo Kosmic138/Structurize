@@ -124,10 +124,11 @@ public final class Structures
     @SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS)
     private static void loadStyleMaps()
     {
+        /* TODO REMOVE
         if (!Configurations.gameplay.ignoreSchematicsFromJar)
         {
             loadStyleMapsJar();
-        }
+        }*/
 
         final File schematicsFolder = Structurize.proxy.getSchematicsFolder();
         if (schematicsFolder != null)
@@ -372,7 +373,7 @@ public final class Structures
      * @param allowed True if the server allow it otherwise False
      */
     @SideOnly(Side.CLIENT)
-    public static void setAllowPlayerSchematics(final boolean allowed)
+    public static void setAllowPlayerSchematics(final boolean allowed) // TODO: local schematics
     {
         allowPlayerSchematics = allowed;
     }
@@ -762,20 +763,20 @@ public final class Structures
         {
             return true;
         }
-        if (!Configurations.gameplay.allowPlayerSchematics)
+        if (!Configurations.allowLocalSchematics) //TODO local schematics
         {
             return false;
         }
 
         final Set<String> md5Set = getCachedMD5s();
-        if (md5Set.size() < Configurations.gameplay.maxCachedSchematics)
+        if (md5Set.size() < Configurations.maxCachedSchematics)
         {
             return true;
         }
 
         //md5Set contain only the unused one
         final Iterator<String> iterator = md5Set.iterator();
-        while (iterator.hasNext() && md5Set.size() >= Configurations.gameplay.maxCachedSchematics)
+        while (iterator.hasNext() && md5Set.size() >= Configurations.maxCachedSchematics)
         {
             final StructureName sn = new StructureName(iterator.next());
             if (deleteCachedStructure(sn))
@@ -784,7 +785,7 @@ public final class Structures
             }
         }
 
-        return md5Set.size() < Configurations.gameplay.maxCachedSchematics;
+        return md5Set.size() < Configurations.maxCachedSchematics;
     }
 
     /**
