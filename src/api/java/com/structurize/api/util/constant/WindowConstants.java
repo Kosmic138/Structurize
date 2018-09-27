@@ -6,11 +6,6 @@ package com.structurize.api.util.constant;
 public final class WindowConstants
 {
     /**
-     * Id of the paste button.
-     */
-    public static final String BUTTON_PASTE = "pastecomplete";
-
-    /**
      * Id of the rename button in the GUI.
      */
     public static final String BUTTON_RENAME = "rename";
@@ -58,47 +53,72 @@ public final class WindowConstants
     /**
      * This button is used to set the previous available building type.
      */
-    public static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
+    public static final String PREVIOUS = "previous";
 
     /**
-     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
+     * This button is used to set the previous available building type.
      */
-    public static final String DROPDOWN_TYPE_ID = "buildingType";
-
-    /**
-     * This button is used to set the next available building type.
-     */
-    public static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
+    public static final String NEXT = "next";
 
     /**
      * This button is used to set the previous available style.
      */
-    public static final String BUTTON_PREVIOUS_STYLE_ID = "previousStyle";
+    public static final String BUTTON_PREVIOUS_STYLE_ID = PREVIOUS +"Style";
 
     /**
      * This drop down list is used to choose which style should be used.
      */
-    public static final String DROPDOWN_STYLE_ID = "style";
+    public static final String DROPDOWN_STYLES_ID = "styles";
 
     /**
      * This button is used to set the next available style.
      */
-    public static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
+    public static final String BUTTON_NEXT_STYLE_ID = NEXT + "Style";
 
     /**
-     * This button is used to set the previous available schematic.
+     * This button is used to set the previous available style.
      */
-    public static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
+    public static final String BUTTON_PREVIOUS_HEAD_ID = PREVIOUS +"Head";
 
     /**
-     * This drop down list is used to set the schematic.
+     * This drop down list is used to choose which style should be used.
      */
-    public static final String DROPDOWN_SCHEMATIC_ID = "schematic";
+    public static final String DROPDOWN_HEADS_ID = "heads";
 
     /**
-     * This button is used to set the next available schematic.
+     * This button is used to set the next available style.
      */
-    public static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
+    public static final String BUTTON_NEXT_HEAD_ID = NEXT + "Head";
+
+    /**
+     * This button is used to set the previous available style.
+     */
+    public static final String BUTTON_PREVIOUS_TYPE_ID = PREVIOUS +"Type";
+
+    /**
+     * This drop down list is used to choose which style should be used.
+     */
+    public static final String DROPDOWN_TYPES_ID = "types";
+
+    /**
+     * This button is used to set the next available style.
+     */
+    public static final String BUTTON_NEXT_TYPE_ID = NEXT + "Type";
+
+    /**
+     * This button is used to set the previous available style.
+     */
+    public static final String BUTTON_PREVIOUS_FILE_ID = PREVIOUS +"File";
+
+    /**
+     * This drop down list is used to choose which style should be used.
+     */
+    public static final String DROPDOWN_FILES_ID = "files";
+
+    /**
+     * This button is used to set the next available style.
+     */
+    public static final String BUTTON_NEXT_FILE_ID = NEXT + "File";
 
     /**
      * This button will send a packet to the server telling it to place this hut/decoration.
@@ -144,6 +164,21 @@ public final class WindowConstants
      * Mirror the structure.
      */
     public static final String BUTTON_MIRROR = "mirror";
+
+    /**
+     * Id of the paste button.
+     */
+    public static final String BUTTON_PASTE = "pastecomplete";
+
+    /**
+     * Id of the paste nice button.
+     */
+    public static final String BUTTON_PASTE_NICE = "pastenice";
+
+    /**
+     * Id of the paste nice button.
+     */
+    public static final String BUTTON_MANAGE_STYLES = "manageStyles";
 
     /**
      * The shapeTool width/length/height inputs.
@@ -262,6 +297,11 @@ public final class WindowConstants
      * Button to pick the fill block to use.
      */
     public static final String BUTTON_PICK_FILL_BLOCK = "pickFillBlock";
+
+    /**
+     * Button to pick the fill block to use.
+     */
+    public static final String DOWNLOAD = "download";
 
     /**
      * public constructor to hide implicit public one.

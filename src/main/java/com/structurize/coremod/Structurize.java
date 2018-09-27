@@ -1,5 +1,6 @@
 package com.structurize.coremod;
 
+import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.Log;
 import com.structurize.api.util.constant.Constants;
 import com.structurize.coremod.event.FMLEventHandler;
@@ -7,7 +8,7 @@ import com.structurize.coremod.network.messages.*;
 import com.structurize.coremod.placementhandlers.StructurizePlacementHandlers;
 import com.structurize.coremod.proxy.IProxy;
 import com.structurize.coremod.repomanagement.FileManager;
-import com.structurize.coremod.repomanagement.repostructure.Style;
+import com.structurize.coremod.repomanagement.Styles;
 import com.structurize.structures.helpers.Structure;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -21,7 +22,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class Structurize
     /**
      * List of available styles
      */
-    public static        List<Style> styles;
+    private static        Styles      styles;
 
     private static SimpleNetworkWrapper network;
 
@@ -122,6 +122,9 @@ public class Structurize
         proxy.registerEvents();
 
         StructurizePlacementHandlers.initHandlers();
+        
+        Log.getLogger().info("Loading styles, this may take a while...");
+        FileManager.loadRepositories(Configurations.repositoriesUrls);
     }
 
     private static synchronized void initializeNetwork()
@@ -156,16 +159,14 @@ public class Structurize
         return network;
     }
 
-    /**
-     * Event handler for forge post init event.
-     *
-     * @param event the forge post init event.
-     */
-    @Mod.EventHandler
-    public void postInit(final FMLPostInitializationEvent event)
+    public static void setStyles(final Styles styles)
     {
-        Log.getLogger().info("Loading styles, this may take a while...");
-        styles = FileManager.loadRepositories();
-        Log.getLogger().info("Found " + styles.size() + " style(s).");
+        Structurize.instance.styles = styles;
+        Log.getLogger().info("Found " + styles.getStyles().size() + " style(s).");
+    }
+
+    public static Styles getStyles()
+    {
+        return Structurize.instance.styles;
     }
 }

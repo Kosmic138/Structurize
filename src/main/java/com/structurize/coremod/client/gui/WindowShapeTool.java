@@ -182,7 +182,7 @@ public class WindowShapeTool extends AbstractWindowSkeleton
         sections.clear();
         sections.addAll(Arrays.stream(Shape.values()).map(Enum::name).collect(Collectors.toList()));
 
-        sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
+        sectionsDropDownList = findPaneOfTypeByID("style", DropDownList.class);
         sectionsDropDownList.setHandler(this::onDropDownListChanged);
         sectionsDropDownList.setDataProvider(new SectionDropDownList());
         sectionsDropDownList.setSelectedIndex(Settings.instance.getShape().ordinal());

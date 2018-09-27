@@ -19,10 +19,13 @@ public class Configurations
     @Config.Comment("Max world operations per tick (Max blocks to place, remove or replace)")
     public static int maxOperationsPerTick = 100;
 
-    @Config.Comment("List of repositories of schematics to load from (use \"local:\" for loading schematics from local files")
+    @Config.Comment("List of repositories of schematics to load from (use \"local:\" for loading schematics from local files), download must be the FIRST item in this list")
     public static String[] repositoriesUrls = new String[]
     {
-        "https://raw.githubusercontent.com/Nightenom/minecolonies-schematics-test/",
-        "local:structurize"
+        "download:structurize/singleplayer",
+        "github:ldtteam/minecolonies-schematics"
     };
+
+    @Config.Comment("Amount of threads used for downloading files for one style")
+    public static int amountOfThreadsForDownloading = 5;
 }

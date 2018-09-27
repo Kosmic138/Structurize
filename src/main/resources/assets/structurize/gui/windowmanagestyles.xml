@@ -1,0 +1,21 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/structurize/blockout/blockOut.xsd">
+
+    <image source="structurize:textures/gui/styles_body.png" pos="10 40" size="400 200"/>
+    <buttonimage id="previous" source="structurize:textures/gui/styles_left.png" pos="-2 56" size="12 20"/>
+    <buttonimage id="next" source="structurize:textures/gui/styles_right.png" pos="410 56" size="12 20"/>
+    <buttonimage id="name0" source="structurize:textures/gui/styles_name.png" pos="21 20" size="90 20" textcolor="black" textoffset="0 3"/>
+    <buttonimage id="name1" source="structurize:textures/gui/styles_name.png" pos="117 20" size="90 20" textcolor="black" textoffset="0 3"/>
+    <buttonimage id="name2" source="structurize:textures/gui/styles_name.png" pos="213 20" size="90 20" textcolor="black" textoffset="0 3"/>
+    <buttonimage id="name3" source="structurize:textures/gui/styles_name.png" pos="309 20" size="90 20" textcolor="black" textoffset="0 3"/>
+    <buttonimage id="name_selected" source="structurize:textures/gui/styles_name_selected.png" pos="0 0" size="90 3" visible="false"/>
+
+    <image id="image" source="structurize:textures/gui/styles_name.png" pos="18 48" size="200 150"/>
+    <text id="name" pos="228 48" size="164 11" color="black" textalign="TOP_LEFT"/>
+    <text id="author" pos="228 60" size="164 11" color="black" textalign="TOP_LEFT"/>
+    <text id="base" pos="228 75" size="164 11" color="black" textalign="TOP_LEFT"/>
+    <text id="description" pos="228 90" size="164 80" color="black" textalign="TOP_LEFT"/>
+    <text id="joke" pos="228 176" size="164 22" color="black" textalign="TOP_LEFT"/>
+    <text id="registry" pos="18 208" size="350 24" color="black" textalign="TOP_LEFT"/>
+    <button id="download" pos="342 208" size="60 24" label="Download"/>
+</window>

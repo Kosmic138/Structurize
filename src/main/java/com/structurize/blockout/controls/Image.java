@@ -1,19 +1,25 @@
 package com.structurize.blockout.controls;
 
+import com.ldtteam.blockout.util.Log;
 import com.structurize.blockout.Pane;
 import com.structurize.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.io.IOException;
-import java.util.Iterator;
 
-import static com.structurize.blockout.Log.getLogger;
+import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Simple image element.
@@ -23,6 +29,7 @@ public class Image extends Pane
     public static final int MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE = 256;
 
     protected ResourceLocation resourceLocation;
+    protected DynamicTexture   dynamicLocalTexture;
     protected int     imageOffsetX = 0;
     protected int     imageOffsetY = 0;
     protected int     imageWidth   = 0;
@@ -74,7 +81,43 @@ public class Image extends Pane
 
     private void loadMapDimensions()
     {
+        if (resourceLocation.getNamespace().equals("local"))
+        {
+            final String path = resourceLocation.getPath();
+            if (path.isEmpty())
+            {
+                mapWidth = 0;
+                mapHeight = 0;
+                return;
+            }
+
+            try
+            {
+                final Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
+                final InputStream inputStream = new DataInputStream(new FileInputStream(new File(path)));
+                final ImageInputStream imageStream = ImageIO.createImageInputStream(inputStream);
+
+                dynamicLocalTexture = new DynamicTexture(ImageIO.read(inputStream));
+                if (it.hasNext())
+                {
+                    final ImageReader reader = it.next();
+                    reader.setInput(imageStream);
+                    mapWidth = reader.getWidth(reader.getMinIndex());
+                    mapHeight = reader.getHeight(reader.getMinIndex());
+                    reader.dispose();
+                }
+            }
+            catch (IOException e)
+            {
+                Log.getLogger().warn("The image was not loaded: " + e);
+            }
+
+            resourceLocation = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("dynamicimage", dynamicLocalTexture);
+            return;
+        }
+
         final Tuple<Integer, Integer> dimensions = getImageDimensions(resourceLocation);
+
         mapWidth = dimensions.getFirst();
         mapHeight = dimensions.getSecond();
     }
@@ -102,7 +145,7 @@ public class Image extends Pane
             }
             catch (final IOException e)
             {
-                getLogger().warn(e);
+                Log.getLogger().warn(e);
             }
             finally
             {
@@ -148,6 +191,8 @@ public class Image extends Pane
      */
     public void setImage(final ResourceLocation loc, final int offsetX, final int offsetY, final int w, final int h)
     {
+        unloadDynamicLocalTexture();
+
         resourceLocation = loc;
         imageOffsetX = offsetX;
         imageOffsetY = offsetY;
@@ -223,5 +268,13 @@ public class Image extends Pane
         }
 
         GlStateManager.popMatrix();
+    }
+
+    public void unloadDynamicLocalTexture()
+    {
+        if (resourceLocation.getPath().contains("dynamicimage"))
+        {
+            Minecraft.getMinecraft().getTextureManager().deleteTexture(resourceLocation);
+        }
     }
 }
