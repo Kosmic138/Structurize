@@ -17,7 +17,7 @@ public class Configurations
     public static int maxCachedChanges = 10;
 
     @Config.Comment("Max world operations per tick (Max blocks to place, remove or replace)")
-    public static int maxOperationsPerTick = 100;
+    public static int maxOperationsPerTick = 1000;
 
     @Config.Comment("List of repositories of schematics to load from (use \"local:\" for loading schematics from local files), download must be the FIRST item in this list")
     public static String[] repositoriesUrls = new String[]
