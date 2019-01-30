@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Message class which handles updating the structurize multiblock.
+ * Message class which handles updating the minecolonies multiblock.
  */
 public class MultiBlockChangeMessage extends AbstractMessage<MultiBlockChangeMessage, IMessage>
 {

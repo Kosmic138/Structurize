@@ -1,22 +1,31 @@
 package com.structurize.coremod.proxy;
 
+import java.io.File;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.structurize.api.util.Log;
 import com.structurize.api.util.constant.Constants;
-import com.structurize.coremod.blocks.*;
+import com.structurize.coremod.blocks.ModBlocks;
 import com.structurize.coremod.blocks.cactus.BlockCactusDoor;
 import com.structurize.coremod.blocks.decorative.BlockPaperwall;
 import com.structurize.coremod.blocks.decorative.BlockShingle;
 import com.structurize.coremod.blocks.decorative.BlockTimberFrame;
-import com.structurize.coremod.blocks.schematic.BlockSubstitution;
 import com.structurize.coremod.blocks.types.PaperwallType;
-import com.structurize.coremod.client.gui.*;
-import com.structurize.coremod.structmanagement.Manager;
-import com.structurize.coremod.structmanagement.Structures;
+import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.structurize.coremod.client.gui.WindowMultiBlock;
+import com.structurize.coremod.client.gui.WindowScan;
+import com.structurize.coremod.client.gui.WindowShapeTool;
+import com.structurize.coremod.commands.UpdateSchematics;
 import com.structurize.coremod.event.ClientEventHandler;
 import com.structurize.coremod.items.ModItems;
-import com.structurize.structures.client.TemplateBlockAccessTransformHandler;
+import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.management.Structures;
+import com.structurize.structures.client.TemplateBlockInfoTransformHandler;
 import com.structurize.structures.event.RenderEventHandler;
 import com.structurize.structures.helpers.Settings;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
@@ -31,6 +40,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,10 +49,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 /**
  * Client side proxy.
@@ -68,6 +74,8 @@ public class ClientProxy extends CommonProxy
 
         MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+
+        ClientCommandHandler.instance.registerCommand(new UpdateSchematics());
     }
 
     @Override
@@ -103,13 +111,6 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowScan window = new WindowScan(pos1, pos2);
-        window.open();
-    }
-
-    @Override
-    public void openMultiBlockWindow(@Nullable final BlockPos pos)
-    {
-        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
         window.open();
     }
 
@@ -173,10 +174,11 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockCactusSlabHalf);
         createCustomModel(ModBlocks.blockCactusSlabDouble);
         createCustomModel(ModItems.itemCactusDoor);
+        createCustomModel(ModBlocks.blockCactusFence);
+        createCustomModel(ModBlocks.blockCactusFenceGate);
 
         // Achievement proxy Items
         createCustomModel(ModBlocks.blockShingleSlab);
-        createCustomModel(ModBlocks.multiBlock);
 
         ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
         ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
@@ -217,11 +219,21 @@ public class ClientProxy extends CommonProxy
                         new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
         }
 
+        createCustomModel(ModBlocks.multiBlock);
+
         //Additionally we register an exclusion handler here;
-        TemplateBlockAccessTransformHandler.getInstance().AddTransformHandler(
-          (b) -> b.blockState.getBlock() instanceof BlockSubstitution,
+        TemplateBlockInfoTransformHandler.getInstance().AddTransformHandler(
+          (b) -> b.blockState.getBlock() == ModBlocks.blockSubstitution,
           (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
         );
+
+        //Additionally we register an exclusion handler here;
+        TemplateBlockInfoTransformHandler.getInstance().AddTransformHandler(
+          (b) -> b.blockState.getBlock() == ModBlocks.blockSolidSubstitution,
+          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
+        );
+
+
     }
 
     @Override
@@ -242,8 +254,7 @@ public class ClientProxy extends CommonProxy
 
         // if the world schematics folder exists we use it
         // otherwise we use the minecraft folder  /structurize/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                                                     + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
+        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory() + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
 
         if (!worldSchematicFolder.exists())
         {
@@ -281,5 +292,12 @@ public class ClientProxy extends CommonProxy
         }
 
         return super.getRecipeBookFromPlayer(player);
+    }
+
+    @Override
+    public void openMultiBlockWindow(@Nullable final BlockPos pos)
+    {
+        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
+        window.open();
     }
 }

@@ -2,8 +2,9 @@ package com.structurize.coremod.proxy;
 
 import com.structurize.api.util.constant.Constants;
 import com.structurize.coremod.blocks.ModBlocks;
+import com.structurize.coremod.event.FMLEventHandler;
 import com.structurize.coremod.items.ModItems;
-import com.structurize.coremod.tileentities.*;
+import com.structurize.coremod.tileentities.TileEntityMultiBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -95,11 +97,23 @@ public class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ".MultiBlock");
+        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ":multiblock");
     }
 
     @Override
     public void registerEvents()
+    {
+        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
+    }
+
+    @Override
+    public void registerEntities()
+    {
+
+    }
+
+    @Override
+    public void registerEntityRendering()
     {
         /*
          * Intentionally left empty.
@@ -117,14 +131,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openScanToolWindow(final BlockPos pos1, final BlockPos pos2)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void openMultiBlockWindow(final BlockPos pos)
     {
         /*
          * Intentionally left empty.
@@ -180,5 +186,13 @@ public class CommonProxy implements IProxy
     public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
     {
         return ((EntityPlayerMP) player).getRecipeBook();
+    }
+
+    @Override
+    public void openMultiBlockWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
     }
 }

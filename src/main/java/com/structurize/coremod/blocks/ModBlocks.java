@@ -45,7 +45,6 @@ public final class ModBlocks
     public static BlockShingle                blockShingleDarkOak;
     public static BlockShingle                blockShingleAcacia;
     public static BlockShingleSlab            blockShingleSlab;
-    public static MultiBlock                  multiBlock;
 
     public static        BlockCactusPlank               blockCactusPlank;
     public static        BlockCactusDoor                blockCactusDoor;
@@ -53,6 +52,10 @@ public final class ModBlocks
     public static        BlockCactusStair               blockCactusStair;
     public static        BlockCactusSlabHalf            blockCactusSlabHalf;
     public static        BlockCactusSlabDouble          blockCactusSlabDouble;
+    public static        BlockCactusFence               blockCactusFence;
+    public static        BlockCactusFenceGate           blockCactusFenceGate;
+
+    public static MultiBlock                  multiBlock;
 
     public static List<BlockTimberFrame> getTimberFrames()
     {
@@ -81,6 +84,8 @@ public final class ModBlocks
         blockCactusSlabDouble = new BlockCactusSlabDouble().registerBlock(registry);
 
         blockCactusStair = new BlockCactusStair(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.OAK)).registerBlock(registry);
+        blockCactusFence = new BlockCactusFence().registerBlock(registry);
+        blockCactusFenceGate = new BlockCactusFenceGate(BlockPlanks.EnumType.OAK).registerBlock(registry);
 
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
@@ -99,7 +104,6 @@ public final class ModBlocks
         blockShingleAcacia = new BlockShingle(new BlockPlanks().getDefaultState().withProperty(BlockPlanks.VARIANT, BlockPlanks.EnumType.ACACIA),
           BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()).registerBlock(registry);
         blockShingleSlab = new BlockShingleSlab().registerBlock(registry);
-        multiBlock = new MultiBlock().registerBlock(registry);
 
         for (final BlockPlanks.EnumType type : BlockPlanks.EnumType.values())
         {
@@ -108,6 +112,8 @@ public final class ModBlocks
                 timberFrames.add(new BlockTimberFrame(BlockTimberFrame.BLOCK_NAME + "_" + type.getName() + "_" + frameType).registerBlock(registry));
             }
         }
+
+        multiBlock = new MultiBlock().registerBlock(registry);
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -122,16 +128,19 @@ public final class ModBlocks
         blockShingleDarkOak.registerItemBlock(registry);
         blockShingleAcacia.registerItemBlock(registry);
         blockShingleSlab.registerItemBlock(registry);
-        multiBlock.registerItemBlock(registry);
 
         blockCactusPlank.registerItemBlock(registry);
         blockCactusTrapdoor.registerItemBlock(registry);
         blockCactusStair.registerItemBlock(registry);
         registry.register(new ItemSlab(blockCactusSlabHalf, blockCactusSlabHalf, blockCactusSlabDouble).setRegistryName(blockCactusSlabHalf.getRegistryName()));
+        blockCactusFence.registerItemBlock(registry);
+        blockCactusFenceGate.registerItemBlock(registry);
 
         for (final BlockTimberFrame frame: timberFrames)
         {
             frame.registerItemBlock(registry);
         }
+
+        multiBlock.registerItemBlock(registry);
     }
 }

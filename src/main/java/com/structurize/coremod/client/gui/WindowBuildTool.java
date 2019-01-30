@@ -238,10 +238,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            requestScannedSchematic(structureName, true, complete);
+            requestAndPlaceScannedSchematic(structureName, true, complete);
         }
-
-        paste(structureName, complete);
+        else
+        {
+            paste(structureName, complete);
+        }
         Settings.instance.reset();
         close();
     }
@@ -387,6 +389,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        super.onOpened();
         if (!hasPermission())
         {
             close();
@@ -650,7 +653,98 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete      if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    public static void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
+    public void requestAndPlaceScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
+    {
+        if (!Structures.isPlayerSchematicsAllowed())
+        {
+            return;
+        }
+
+        if (Structures.hasMD5(structureName))
+        {
+            final String md5 = Structures.getMD5(structureName.toString());
+            final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
+            if (!Structures.hasMD5(new StructureName(serverSideName)))
+            {
+                final InputStream stream = Structure.getStream(structureName.toString());
+                if (stream != null)
+                {
+                    final UUID id = UUID.randomUUID();
+                    final byte[] structureAsByteArray = Structure.getStreamAsByteArray(stream);
+
+                    if (structureAsByteArray.length <= MAX_MESSAGE_SIZE)
+                    {
+                        Structurize.getNetwork().sendToServer(new SchematicSaveMessage(structureAsByteArray, id, 1, 1));
+                    }
+                    else
+                    {
+                        final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
+
+                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
+                        for (int i = 1; i <= pieces; i++)
+                        {
+                            final int start = (i - 1) * MAX_MESSAGE_SIZE;
+                            final int size;
+                            if (i == pieces)
+                            {
+                                size = structureAsByteArray.length - (start);
+                            }
+                            else
+                            {
+                                size = MAX_MESSAGE_SIZE;
+                            }
+                            final byte[] bytes = new byte[size];
+                            Array.copy(structureAsByteArray, start, bytes, 0, size);
+                            Structurize.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
+                        }
+                    }
+                }
+                else
+                {
+                    Log.getLogger().warn("BuildTool: Can not load " + structureName);
+                }
+            }
+            else
+            {
+                Log.getLogger().warn("BuildTool: server does not have " + serverSideName);
+            }
+
+            if (paste || pasteDirectly())
+            {
+                Structurize.getNetwork().sendToServer(new BuildToolPasteMessage(
+                  serverSideName,
+                  structureName.toString(),
+                  Settings.instance.getPosition(),
+                  Settings.instance.getRotation(),
+                  false,
+                  Settings.instance.getMirror(),
+                  complete, null));
+            }
+            else
+            {
+                place(new StructureName(serverSideName));
+            }
+        }
+        else
+        {
+            if (pasteDirectly())
+            {
+                paste(structureName, complete);
+            }
+            else
+            {
+                place(structureName);
+            }
+            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
+        }
+    }
+
+    /**
+     * Request to send a scanned schematic to the server.
+     *
+     * @param structureName of the scan to be built.
+     */
+    public static void requestScannedSchematic(@NotNull final StructureName structureName)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -711,6 +805,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
         }
     }
+
 
     /**
      * Override if place without paste is required.
@@ -778,16 +873,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
             {
                 //We need to check that the server have it too using the md5
-                requestScannedSchematic(structureName, false, false);
-            }
-            
-            if (pasteDirectly())
-            {
-                paste(structureName, false);
+                requestAndPlaceScannedSchematic(structureName, false, false);
             }
             else
             {
-                place(structureName);
+                if (pasteDirectly())
+                {
+                    paste(structureName, false);
+                }
+                else
+                {
+                    place(structureName);
+                }
             }
 
             if (!GuiScreen.isShiftKeyDown())

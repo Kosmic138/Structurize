@@ -3,14 +3,15 @@ package com.structurize.coremod;
 import com.structurize.api.configuration.Configurations;
 import com.structurize.api.util.Log;
 import com.structurize.api.util.constant.Constants;
-import com.structurize.coremod.event.FMLEventHandler;
+import com.structurize.compat.optifine.OptifineCompat;
+import com.structurize.coremod.blocks.ModBlocks;
+import com.structurize.coremod.management.Structures;
 import com.structurize.coremod.network.messages.*;
-import com.structurize.coremod.placementhandlers.StructurizePlacementHandlers;
+import com.structurize.coremod.placementhandlers.PlacementHandlers;
 import com.structurize.coremod.proxy.IProxy;
 import com.structurize.coremod.repomanagement.FileManager;
 import com.structurize.coremod.repomanagement.Styles;
 import com.structurize.structures.helpers.Structure;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -18,10 +19,12 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -52,11 +55,6 @@ public class Structurize
     private static        Styles      styles;
 
     private static SimpleNetworkWrapper network;
-
-    static
-    {
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-    }
 
     /**
      * Returns whether the side is client or not
@@ -119,12 +117,22 @@ public class Structurize
         initializeNetwork();
 
         proxy.registerTileEntities();
-        proxy.registerEvents();
-
-        StructurizePlacementHandlers.initHandlers();
         
         Log.getLogger().info("Loading styles, this may take a while...");
         FileManager.loadRepositories(Configurations.repositoriesUrls);
+
+        proxy.registerTileEntityRendering();
+
+        proxy.registerRenderer();
+
+        OreDictionary.registerOre("plankWood", ModBlocks.blockCactusPlank);
+        OreDictionary.registerOre("slabWood", ModBlocks.blockCactusSlabHalf);
+        OreDictionary.registerOre("stairWood", ModBlocks.blockCactusStair);
+
+        OreDictionary.registerOre("fenceWood", ModBlocks.blockCactusFence);
+        OreDictionary.registerOre("fenceGateWood", ModBlocks.blockCactusFenceGate);
+
+        OptifineCompat.getInstance().intialize();
     }
 
     private static synchronized void initializeNetwork()
@@ -136,7 +144,6 @@ public class Structurize
 
         // Tool action messages
         getNetwork().registerMessage(BuildToolPasteMessage.class, BuildToolPasteMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(MultiBlockChangeMessage.class, MultiBlockChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ScanOnServerMessage.class, ScanOnServerMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RemoveBlockMessage.class, RemoveBlockMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RemoveEntityMessage.class, RemoveEntityMessage.class, ++id, Side.SERVER);
@@ -149,9 +156,18 @@ public class Structurize
         getNetwork().registerMessage(UndoMessage.class, UndoMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(StructurizeStylesMessage.class, StructurizeStylesMessage.class, ++id, Side.CLIENT);
 
+        // Multiblock message
+        getNetwork().registerMessage(MultiBlockChangeMessage.class, MultiBlockChangeMessage.class, ++id, Side.SERVER);
+
         // Client side only
         getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, ++id, Side.CLIENT);
         getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, ++id, Side.CLIENT);
+    }
+
+    @Mod.EventHandler
+    public void serverAboutLoad(final FMLServerAboutToStartEvent event)
+    {
+        Structures.init();
     }
 
     public static SimpleNetworkWrapper getNetwork()

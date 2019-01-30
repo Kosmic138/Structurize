@@ -3,34 +3,41 @@ package com.structurize.coremod.event;
 import com.structurize.api.util.BlockPosUtil;
 import com.structurize.api.util.LanguageHandler;
 import com.structurize.api.util.constant.Constants;
+import com.structurize.blockout.Log;
 import com.structurize.coremod.Structurize;
 import com.structurize.coremod.items.ModItems;
-import com.structurize.coremod.structmanagement.Manager;
-import com.structurize.coremod.structmanagement.Structures;
+import com.structurize.coremod.management.Manager;
 import com.structurize.coremod.network.messages.StructurizeStylesMessage;
 import com.structurize.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.structurize.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 
 /**
  * Event handler used to catch various forge events.
  */
+@Mod.EventBusSubscriber
 public class FMLEventHandler
 {
     /**
@@ -48,41 +55,7 @@ public class FMLEventHandler
             Structurize.getNetwork().sendTo(new StructurizeStylesMessage(), (EntityPlayerMP) event.player);
         }
     }
-
-    /**
-     * World load event.
-     * @param event the event params.
-     */
-    @SubscribeEvent
-    public void onWorldLoad(@NotNull final WorldEvent.Load event)
-    {
-        if (!event.getWorld().isRemote)
-        {
-            Structures.init();
-        }
-    }
-
-    /**
-     * Called when the config is changed, used to synch between file and game.
-     *
-     * @param event the on config changed event.
-     */
-    @SubscribeEvent
-    public void missingMapping(@NotNull final RegistryEvent.MissingMappings<Block> event)
-    {
-        event.getAllMappings().forEach((mapping) -> {
-            if(mapping.key.toString().contains(Constants.MINECOLONIES_MOD_ID))
-            {
-                final Block newBlock = Block.getBlockFromName(Constants.MOD_ID + ":" + mapping.key.getPath());
-                if (newBlock != null)
-                {
-                    mapping.remap(newBlock);
-                }
-            }
-        });
-    }
-
-
+    
     /**
      * Called when the config is changed, used to synch between file and game.
      *
@@ -122,7 +95,7 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public void onBlockBreak(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.world.isRemote)
         {

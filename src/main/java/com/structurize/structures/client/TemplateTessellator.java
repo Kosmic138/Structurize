@@ -1,5 +1,6 @@
 package com.structurize.structures.client;
 
+import com.structurize.compat.optifine.OptifineCompat;
 import com.structurize.structures.lib.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -16,19 +17,18 @@ import static org.lwjgl.opengl.GL11.*;
 public class TemplateTessellator
 {
 
-    private static final int VERTEX_COMPONENT_SIZE = 3;
-    private static final  int   COLOR_COMPONENT_SIZE              = 4;
-    private static final  int   TEX_COORD_COMPONENT_SIZE          = 2;
-    private static final  int   LIGHT_TEX_COORD_COMPONENT_SIZE    = TEX_COORD_COMPONENT_SIZE;
-    private static final  int   VERTEX_SIZE                       = 28;
-    private static final  int   VERTEX_COMPONENT_OFFSET           = 0;
-    private static final  int   COLOR_COMPONENT_OFFSET            = 12;
-    private static final  int   TEX_COORD_COMPONENT_OFFSET        = 16;
-    private static final  int   LIGHT_TEXT_COORD_COMPONENT_OFFSET = 24;
-    private static final float HALF_PERCENT_SHRINK               = 0.995F;
-    private static final int DEFAULT_BUFFER_SIZE = 2097152;
+    private static final int   VERTEX_COMPONENT_SIZE             = 3;
+    private static final int   COLOR_COMPONENT_SIZE              = 4;
+    private static final int   TEX_COORD_COMPONENT_SIZE          = 2;
+    private static final int   LIGHT_TEX_COORD_COMPONENT_SIZE    = TEX_COORD_COMPONENT_SIZE;
+    private static final int   VERTEX_SIZE                       = 28;
+    private static final int   VERTEX_COMPONENT_OFFSET           = 0;
+    private static final int   COLOR_COMPONENT_OFFSET            = 12;
+    private static final int   TEX_COORD_COMPONENT_OFFSET        = 16;
+    private static final int   LIGHT_TEXT_COORD_COMPONENT_OFFSET = 24;
+    private static final int   DEFAULT_BUFFER_SIZE               = 2097152;
 
-    private final BufferBuilder builder;
+    private final BufferBuilder        builder;
     private final VertexBuffer         buffer      = new VertexBuffer(DefaultVertexFormats.BLOCK);
     private final VertexBufferUploader vboUploader = new VertexBufferUploader();
     private       boolean              isReadOnly  = false;
@@ -42,20 +42,15 @@ public class TemplateTessellator
     /**
      * Draws the data set up in this tessellator and resets the state to prepare for new drawing.
      */
-    public void draw(final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset, final BlockPos inTemplateOffset)
+    public void draw()
     {
-        if (!isReadOnly)
-        {
-            this.builder.finishDrawing();
-            this.vboUploader.draw(this.builder);
-            this.isReadOnly = true;
-        }
-
-        preTemplateBufferBinding(rotation, mirror, drawingOffset, inTemplateOffset);
+        GlStateManager.pushMatrix();
 
         this.buffer.bindBuffer();
 
         preTemplateDraw();
+
+        GlStateManager.bindTexture(Minecraft.getMinecraft().getTextureMapBlocks().getGlTextureId());
 
         this.buffer.drawArrays(GL_QUADS);
 
@@ -63,32 +58,13 @@ public class TemplateTessellator
 
         this.buffer.unbindBuffer();
 
-        postTemplateBufferUnbinding();
-    }
-
-    private static void preTemplateBufferBinding(final Rotation rotation, final Mirror mirror, final Vector3d drawingOffset, final BlockPos inTemplateOffset)
-    {
-        final ITextureObject textureObject = Minecraft.getMinecraft().getTextureMapBlocks();
-        GlStateManager.bindTexture(textureObject.getGlTextureId());
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(drawingOffset.x, drawingOffset.y, drawingOffset.z);
-
-        final BlockPos rotateInTemplateOffset = inTemplateOffset.rotate(rotation);
-        GlStateManager.translate(-rotateInTemplateOffset.getX(), -rotateInTemplateOffset.getY(), -rotateInTemplateOffset.getZ());
-
-        RenderUtil.applyRotationToYAxis(rotation);
-        RenderUtil.applyMirror(mirror, inTemplateOffset);
-
-        GlStateManager.scale(HALF_PERCENT_SHRINK, HALF_PERCENT_SHRINK, HALF_PERCENT_SHRINK);
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.resetColor();
-        GlStateManager.pushMatrix();
+        GlStateManager.popMatrix();
     }
 
     private static void preTemplateDraw()
     {
+        OptifineCompat.getInstance().preTemplateDraw();
+
         GlStateManager.glEnableClientState(GL_VERTEX_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
         GlStateManager.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -96,6 +72,13 @@ public class TemplateTessellator
         GlStateManager.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
         GlStateManager.glEnableClientState(GL_COLOR_ARRAY);
+
+        //Optifine uses its one vertexformats.
+        //It handles the setting of the pointers itself.
+        if (OptifineCompat.getInstance().setupArrayPointers())
+        {
+            return;
+        }
 
         GlStateManager.glVertexPointer(VERTEX_COMPONENT_SIZE, GL_FLOAT, VERTEX_SIZE, VERTEX_COMPONENT_OFFSET);
         GlStateManager.glColorPointer(COLOR_COMPONENT_SIZE, GL_UNSIGNED_BYTE, VERTEX_SIZE, COLOR_COMPONENT_OFFSET);
@@ -135,14 +118,45 @@ public class TemplateTessellator
                     break;
             }
         }
+
+        //Disable the pointers again.
+        OptifineCompat.getInstance().postTemplateDraw();
     }
 
-    private void postTemplateBufferUnbinding()
+    /**
+     * Method to start the building of the template VBO.
+     * Can only be called once.
+     */
+    public void startBuilding()
     {
-        GlStateManager.popMatrix();
-        GlStateManager.resetColor();
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        if (isReadOnly)
+        {
+            throw new IllegalStateException("Tessellator already build before");
+        }
+
+        builder.begin(GL_QUADS, DefaultVertexFormats.BLOCK);
+    }
+
+    /**
+     * Method to end the building of the template VBO.
+     * Can only be called once.
+     */
+    public void finishBuilding()
+    {
+        if (!isReadOnly)
+        {
+            this.builder.finishDrawing();
+
+            //Tell optifine that we are loading a new instance into the GPU.
+            //This ensures that normals are calculated so that we know in which direction a face is facing. (Aka what is outside and what inside)
+            OptifineCompat.getInstance().beforeBuilderUpload(this);
+            this.vboUploader.draw(this.builder);
+            this.isReadOnly = true;
+        }
+        else
+        {
+            throw new IllegalStateException("Tessellator already build before");
+        }
     }
 
     public BufferBuilder getBuilder()

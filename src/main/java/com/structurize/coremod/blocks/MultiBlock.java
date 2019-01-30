@@ -17,8 +17,6 @@ import net.minecraft.world.World;
 
 import java.util.Locale;
 
-import static com.structurize.api.util.constant.Suppression.DEPRECATION;
-
 /**
  * This Class is about the MultiBlock which takes care of pushing others around (In a non mean way).
  */
@@ -56,7 +54,7 @@ public class MultiBlock extends AbstractBlockStructurize<MultiBlock>
      */
     private void initBlock()
     {
-        setRegistryName(BLOCK_NAME);
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.STRUCTURIZE);
         setHardness(BLOCK_HARDNESS);
@@ -82,6 +80,7 @@ public class MultiBlock extends AbstractBlockStructurize<MultiBlock>
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
@@ -111,7 +110,6 @@ public class MultiBlock extends AbstractBlockStructurize<MultiBlock>
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
-    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isFullBlock(final IBlockState state)
@@ -128,7 +126,6 @@ public class MultiBlock extends AbstractBlockStructurize<MultiBlock>
      * @deprecated
      */
     //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)

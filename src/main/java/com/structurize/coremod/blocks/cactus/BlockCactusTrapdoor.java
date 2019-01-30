@@ -14,8 +14,8 @@ public class BlockCactusTrapdoor extends AbstractBlockTrapdoor<BlockCactusTrapdo
     public BlockCactusTrapdoor()
     {
         super(Material.WOOD);
-        setRegistryName("blockcactustrapdoor");
-        setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactustrapdoordoor");
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + "blockcactustrapdoor");
+        setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + "blockcactustrapdoor");
         setCreativeTab(ModCreativeTabs.STRUCTURIZE);
         setSoundType(SoundType.WOOD);
         setHarvestLevel("axe", 0);

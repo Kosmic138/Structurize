@@ -19,11 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.structurize.api.util.constant.Constants.*;
 import static com.structurize.api.util.constant.NbtTagConstants.*;
-import static com.structurize.api.util.constant.Constants.HALF_BLOCK;
-import static com.structurize.api.util.constant.Constants.TICKS_SECOND;
 import static net.minecraft.util.EnumFacing.*;
-
 
 /**
  * This Class is about the MultiBlock TileEntity which takes care of pushing others around (In a non mean way).
@@ -189,8 +187,8 @@ public class TileEntityMultiBlock extends TileEntity implements ITickable
                     pos,
                     SoundEvents.BLOCK_PISTON_EXTEND,
                     SoundCategory.BLOCKS,
-                    (float) 0.2,
-                    (float) 0.7);
+                    (float) VOLUME,
+                    (float) PITCH);
             progress++;
         }
     }

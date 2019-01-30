@@ -28,4 +28,7 @@ public class Configurations
 
     @Config.Comment("Amount of threads used for downloading files for one style")
     public static int amountOfThreadsForDownloading = 5;
+
+    @Config.Comment("Max amount of blocks checked by a possible worker.")
+    public int maxBlocksChecked = 1000;
 }

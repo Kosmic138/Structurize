@@ -239,11 +239,6 @@ public final class WindowConstants
     public static final String UNDO_BUTTON = "undo";
 
     /**
-     * Resource suffix of the multiblock GUI.
-     */
-    public static final String MULTI_BLOCK_RESOURCE_SUFFIX = ":gui/windowmultiblock.xml";
-
-    /**
      * Id of the speed input field.
      */
     public static final String INPUT_SPEED = "speed";
@@ -302,6 +297,11 @@ public final class WindowConstants
      * Button to pick the fill block to use.
      */
     public static final String DOWNLOAD = "download";
+    
+    /**
+     * Resource suffix of the multiblock GUI.
+     */
+    public static final String MULTI_BLOCK_RESOURCE_SUFFIX = ":gui/windowmultiblock.xml";
 
     /**
      * public constructor to hide implicit public one.
