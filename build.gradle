@@ -1,3 +1,6 @@
+import java.util.function.Consumer
+import java.util.function.Predicate
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -13,7 +16,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 version = System.getenv("Version")
-group = 'com.ldtteam' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'com.ldtteam'
 archivesBaseName = 'structurize'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -29,12 +32,12 @@ sourceSets {
             srcDir 'src/mod/java'
         }
     }
-    testmod {
+    'test-mod' {
         java {
             srcDir 'src/test/java'
         }
     }
-    forge13 {
+    'launcher-forge-1.13' {
         java {
             srcDir 'src/launcher/forge/1.13/java'
         }
@@ -42,9 +45,9 @@ sourceSets {
             srcDir 'src/launcher/forge/1.13/resources'
         }
     }
-    testforge113 {
+    'test-launcher-forge-1.13' {
         java {
-            srcDir 'src/launcher-test/forge/1.13/java'
+            srcDir 'src/test-launcher-forge-1.13/java'
         }
     }
 }
@@ -58,19 +61,19 @@ minecraft {
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.forge13
+            source sourceSets.'launcher-forge-1.13'
         }
         server = {
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.forge13
+            source sourceSets.'launcher-forge-1.13'
         }
     }
 }
 
 configurations {
-	forge13Compile {
+    launcherForge113Compile {
 		extendsFrom configurations.minecraft
 	}
 }
@@ -91,3 +94,4 @@ jar {
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
 }
+
