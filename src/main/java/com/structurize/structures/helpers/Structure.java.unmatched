@@ -1,8 +1,8 @@
 package com.structurize.structures.helpers;
 
-import static com.structurize.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
-import static com.structurize.coremod.structmanagement.Structures.SCHEMATIC_EXTENSION;
-import static com.structurize.coremod.structmanagement.Structures.SCHEMATIC_EXTENSION_NEW;
+import static com.ldtteam.structurize.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
+import static com.ldtteam.structurize.structmanagement.Structures.SCHEMATIC_EXTENSION;
+import static com.ldtteam.structurize.structmanagement.Structures.SCHEMATIC_EXTENSION_NEW;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,13 +25,13 @@ import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableList;
-import com.structurize.api.configuration.Configurations;
-import com.structurize.api.util.Log;
-import com.structurize.api.util.constant.Constants;
-import com.structurize.coremod.Structurize;
-import com.structurize.coremod.structmanagement.Manager;
-import com.structurize.coremod.structmanagement.StructureName;
-import com.structurize.coremod.structmanagement.Structures;
+import com.ldtteam.structurize.api.configuration.Configurations;
+import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.api.util.constant.Constants;
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.structmanagement.Manager;
+import com.ldtteam.structurize.structmanagement.StructureName;
+import com.ldtteam.structurize.structmanagement.Structures;
 import com.structurize.structures.blueprints.v1.BlueprintUtil;
 
 import net.minecraft.block.Block;

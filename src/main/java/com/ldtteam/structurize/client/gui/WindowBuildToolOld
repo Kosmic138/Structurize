@@ -1,18 +1,18 @@
-package com.structurize.coremod.client.gui;
+package com.ldtteam.structurize.client.gui;
 
-import com.structurize.api.util.BlockUtils;
-import com.structurize.api.util.LanguageHandler;
-import com.structurize.api.util.constant.Constants;
-import com.structurize.blockout.Log;
-import com.structurize.blockout.controls.Button;
-import com.structurize.blockout.views.DropDownList;
-import com.structurize.coremod.Structurize;
-import com.structurize.coremod.structmanagement.Manager;
-import com.structurize.coremod.structmanagement.StructureName;
-import com.structurize.coremod.structmanagement.Structures;
-import com.structurize.coremod.network.messages.BuildToolPasteMessage;
-import com.structurize.coremod.network.messages.SchematicRequestMessage;
-import com.structurize.coremod.network.messages.SchematicSaveMessage;
+import com.ldtteam.structurize.api.util.BlockUtils;
+import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.constant.Constants;
+import com.ldtteam.blockout.Log;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.views.DropDownList;
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.structmanagement.Manager;
+import com.ldtteam.structurize.structmanagement.StructureName;
+import com.ldtteam.structurize.structmanagement.Structures;
+import com.ldtteam.structurize.network.messages.BuildToolPasteMessage;
+import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structurize.network.messages.SchematicSaveMessage;
 import com.structurize.structures.helpers.Settings;
 import com.structurize.structures.helpers.Structure;
 import net.minecraft.block.Block;
@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.structurize.api.util.constant.Constants.MAX_MESSAGE_SIZE;
-import static com.structurize.api.util.constant.WindowConstants.*;
+import static com.ldtteam.structurize.api.util.constant.Constants.MAX_MESSAGE_SIZE;
+import static com.ldtteam.structurize.api.util.constant.WindowConstants.*;
 
 /**
  * BuildTool window.
@@ -298,11 +298,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             final String name = sections.get(index);
             if (Structures.SCHEMATICS_SCAN.equals(name))
             {
-                return LanguageHandler.format("com.structurize.coremod.gui.buildtool.scans");
+                return LanguageHandler.format("com.ldtteam.structurize.gui.buildtool.scans");
             }
             else if (Structures.SCHEMATICS_PREFIX.equals(name))
             {
-                return LanguageHandler.format("com.structurize.coremod.gui.buildtool.decorations");
+                return LanguageHandler.format("com.ldtteam.structurize.gui.buildtool.decorations");
             }
             //should be a something else.
             return getSectionName(name);

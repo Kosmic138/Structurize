@@ -1,12 +1,12 @@
-package com.structurize.coremod.structmanagement;
+package com.ldtteam.structurize.structmanagement;
 
-import com.structurize.api.configuration.Configurations;
-import com.structurize.api.util.BlockUtils;
-import com.structurize.api.util.ChangeStorage;
-import com.structurize.api.util.Log;
-import com.structurize.api.util.Shape;
-import com.structurize.coremod.util.ScanToolOperation;
-import com.structurize.coremod.util.StructureWrapper;
+import com.ldtteam.structurize.api.configuration.Configurations;
+import com.ldtteam.structurize.api.util.BlockUtils;
+import com.ldtteam.structurize.api.util.ChangeStorage;
+import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.api.util.Shape;
+import com.ldtteam.structurize.util.ScanToolOperation;
+import com.ldtteam.structurize.util.StructureWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,11 +27,9 @@ import java.util.stream.StreamSupport;
 /**
  * Singleton class that links colonies to minecraft.
  */
-public final class Manager
-{
+public final class Manager {
     /**
-     * Indicate if a schematic have just been downloaded.
-     * Client only
+     * Indicate if a schematic have just been downloaded. Client only
      */
     private static boolean schematicDownloaded = false;
 
@@ -50,9 +48,8 @@ public final class Manager
      */
     private static volatile UUID serverUUID = null;
 
-    private Manager()
-    {
-        //Hides default constructor.
+    private Manager() {
+        // Hides default constructor.
     }
 
     /**
@@ -60,16 +57,12 @@ public final class Manager
      *
      * @param world the world which is ticking.
      */
-    public static void onWorldTick(final WorldServer world)
-    {
-        if (!scanToolOperationPool.isEmpty())
-        {
+    public static void onWorldTick(final WorldServer world) {
+        if (!scanToolOperationPool.isEmpty()) {
             final ScanToolOperation operation = scanToolOperationPool.peek();
-            if (operation != null && operation.apply(world))
-            {
+            if (operation != null && operation.apply(world)) {
                 scanToolOperationPool.pop();
-                if (!operation.isUndo())
-                {
+                if (!operation.isUndo()) {
                     addToUndoCache(operation.getChangeStorage());
                 }
             }
@@ -81,8 +74,7 @@ public final class Manager
      *
      * @param operation the operation to add.
      */
-    public static void addToQueue(final ScanToolOperation operation)
-    {
+    public static void addToQueue(final ScanToolOperation operation) {
         scanToolOperationPool.push(operation);
     }
 
@@ -91,10 +83,8 @@ public final class Manager
      *
      * @param storage the storage to add.
      */
-    public static void addToUndoCache(final ChangeStorage storage)
-    {
-        if (changeQueue.size() >= Configurations.maxCachedChanges)
-        {
+    public static void addToUndoCache(final ChangeStorage storage) {
+        if (changeQueue.size() >= Configurations.maxCachedChanges) {
             changeQueue.pop();
         }
         changeQueue.push(storage);
@@ -116,23 +106,13 @@ public final class Manager
      * @param mirror         the mirror.
      * @param rotation       the rotation.
      */
-    public static void pasteStructure(
-      final WorldServer server,
-      final BlockPos pos,
-      final int width,
-      final int length,
-      final int height,
-      final int frequency,
-      final Shape shape,
-      final ItemStack inputBlock,
-      final ItemStack inputFillBlock,
-      final boolean hollow,
-      final EntityPlayerMP player,
-      final Mirror mirror,
-      final int rotation)
-    {
-        final Template template = Manager.getStructureFromFormula(width, length, height, frequency, shape, inputBlock, inputFillBlock, hollow);
-        StructureWrapper.loadAndPlaceShapeWithRotation(server, template, pos, rotation,mirror, player);
+    public static void pasteStructure(final WorldServer server, final BlockPos pos, final int width, final int length,
+            final int height, final int frequency, final Shape shape, final ItemStack inputBlock,
+            final ItemStack inputFillBlock, final boolean hollow, final EntityPlayerMP player, final Mirror mirror,
+            final int rotation) {
+        final Template template = Manager.getStructureFromFormula(width, length, height, frequency, shape, inputBlock,
+                inputFillBlock, hollow);
+        StructureWrapper.loadAndPlaceShapeWithRotation(server, template, pos, rotation, mirror, player);
     }
 
     /**
@@ -146,75 +126,47 @@ public final class Manager
      * @param inputFillBlock the fill block.
      * @param hollow         if hollow or not.
      */
-    public static Template getStructureFromFormula(
-      final int width,
-      final int length,
-      final int height,
-      final int frequency,
-      final Shape shape,
-      final ItemStack inputBlock,
-      final ItemStack inputFillBlock, final boolean hollow)
-    {
+    public static Template getStructureFromFormula(final int width, final int length, final int height,
+            final int frequency, final Shape shape, final ItemStack inputBlock, final ItemStack inputFillBlock,
+            final boolean hollow) {
         final Template template = new Template();
         final IBlockState mainBlock = BlockUtils.getBlockStateFromStack(inputBlock);
         final IBlockState fillBlock = BlockUtils.getBlockStateFromStack(inputFillBlock);
 
-        if (shape == Shape.SPHERE || shape == Shape.HALF_SPHERE || shape == Shape.BOWL)
-        {
+        if (shape == Shape.SPHERE || shape == Shape.HALF_SPHERE || shape == Shape.BOWL) {
             generateSphere(template, height / 2, mainBlock, fillBlock, hollow, shape);
-        }
-        else if (shape == Shape.CUBE)
-        {
+        } else if (shape == Shape.CUBE) {
             generateCube(template, height, width, length, mainBlock, fillBlock, hollow);
-        }
-        else if (shape == Shape.WAVE)
-        {
+        } else if (shape == Shape.WAVE) {
             generateWave(template, height, width, length, frequency, mainBlock, true);
-        }
-        else if (shape == Shape.WAVE_3D)
-        {
+        } else if (shape == Shape.WAVE_3D) {
             generateWave(template, height, width, length, frequency, mainBlock, false);
-        }
-        else if (shape == Shape.CYLINDER)
-        {
+        } else if (shape == Shape.CYLINDER) {
             generateCylinder(template, height, width, mainBlock, fillBlock, hollow);
-        }
-        else if (shape == Shape.DIAMOND || shape == Shape.PYRAMID || shape == Shape.UPSIDE_DOWN_PYRAMID)
-        {
+        } else if (shape == Shape.DIAMOND || shape == Shape.PYRAMID || shape == Shape.UPSIDE_DOWN_PYRAMID) {
             generatePyramid(template, height, mainBlock, fillBlock, hollow, shape);
         }
         return template;
     }
 
-    private static void generatePyramid(
-      final Template template,
-      final int inputHeight,
-      final IBlockState block,
-      final IBlockState fillBlock,
-      final boolean hollow,
-      final Shape shape)
-    {
+    private static void generatePyramid(final Template template, final int inputHeight, final IBlockState block,
+            final IBlockState fillBlock, final boolean hollow, final Shape shape) {
         final int height = shape == Shape.DIAMOND ? inputHeight : inputHeight * 2;
         final Map<BlockPos, IBlockState> posList = new HashMap<>();
-        for (int y = 0; y < height / 2; y++)
-        {
-            for (int x = 0; x < height / 2; x++)
-            {
-                for (int z = 0; z < height / 2; z++)
-                {
-                    if (((x == z && x >= y) || (x == y && x >= z) || ((hollow ? y == z : y >= z) && y >= x)) && x * z <= y * y)
-                    {
+        for (int y = 0; y < height / 2; y++) {
+            for (int x = 0; x < height / 2; x++) {
+                for (int z = 0; z < height / 2; z++) {
+                    if (((x == z && x >= y) || (x == y && x >= z) || ((hollow ? y == z : y >= z) && y >= x))
+                            && x * z <= y * y) {
                         final IBlockState blockToUse = x == z && x >= y || x == y || y == z ? block : fillBlock;
-                        if (shape == Shape.UPSIDE_DOWN_PYRAMID || shape == Shape.DIAMOND)
-                        {
+                        if (shape == Shape.UPSIDE_DOWN_PYRAMID || shape == Shape.DIAMOND) {
                             addPosToList(new BlockPos(x, y, z), blockToUse, posList);
                             addPosToList(new BlockPos(x, y, -z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, y, z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, y, -z), blockToUse, posList);
                         }
 
-                        if (shape == Shape.PYRAMID || shape == Shape.DIAMOND)
-                        {
+                        if (shape == Shape.PYRAMID || shape == Shape.DIAMOND) {
                             addPosToList(new BlockPos(x, -y + height - 2, z), blockToUse, posList);
                             addPosToList(new BlockPos(x, -y + height - 2, -z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, -y + height - 2, z), blockToUse, posList);
@@ -226,7 +178,8 @@ public final class Manager
         }
 
         template.size = new BlockPos(height, height, height);
-        template.blocks.addAll(posList.entrySet().stream().map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
+        template.blocks.addAll(posList.entrySet().stream()
+                .map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
     }
 
     /**
@@ -240,24 +193,15 @@ public final class Manager
      * @param fillBlock the fill block.
      * @param hollow    if full.
      */
-    private static void generateCube(
-      final Template template,
-      final int height,
-      final int width,
-      final int length,
-      final IBlockState block,
-      final IBlockState fillBlock,
-      final boolean hollow)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int z = 0; z < length; z++)
-                {
-                    if (!hollow || ((x == 0 || x == width - 1) || (y == 0 || y == height - 1) || (z == 0 || z == length - 1)))
-                    {
-                        final IBlockState blockToUse = ((x == 0 || x == width - 1) || (y == 0 || y == height - 1) || (z == 0 || z == length - 1)) ? block : fillBlock;
+    private static void generateCube(final Template template, final int height, final int width, final int length,
+            final IBlockState block, final IBlockState fillBlock, final boolean hollow) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                for (int z = 0; z < length; z++) {
+                    if (!hollow || ((x == 0 || x == width - 1) || (y == 0 || y == height - 1)
+                            || (z == 0 || z == length - 1))) {
+                        final IBlockState blockToUse = ((x == 0 || x == width - 1) || (y == 0 || y == height - 1)
+                                || (z == 0 || z == length - 1)) ? block : fillBlock;
                         template.blocks.add(new Template.BlockInfo(new BlockPos(x, y, z), blockToUse, null));
                     }
                 }
@@ -267,7 +211,8 @@ public final class Manager
     }
 
     /**
-     * Generates a hollow sphere with the specific size and adds it to the template provided.
+     * Generates a hollow sphere with the specific size and adds it to the template
+     * provided.
      *
      * @param template  the provided template.
      * @param height    the height.
@@ -276,34 +221,22 @@ public final class Manager
      * @param hollow    if hollow.
      * @param shape     the type of shape.
      */
-    private static void generateSphere(
-      final Template template,
-      final int height,
-      final IBlockState block,
-      final IBlockState fillBlock,
-      final boolean hollow,
-      final Shape shape)
-    {
+    private static void generateSphere(final Template template, final int height, final IBlockState block,
+            final IBlockState fillBlock, final boolean hollow, final Shape shape) {
         final Map<BlockPos, IBlockState> posList = new HashMap<>();
-        for (int y = 0; y <= height + 1; y++)
-        {
-            for (int x = 0; x <= height + 1; x++)
-            {
-                for (int z = 0; z <= height + 1; z++)
-                {
+        for (int y = 0; y <= height + 1; y++) {
+            for (int x = 0; x <= height + 1; x++) {
+                for (int z = 0; z <= height + 1; z++) {
                     int sum = x * x + z * z + y * y;
-                    if (sum < height * height && (!hollow || sum > height * height - 2 * height))
-                    {
+                    if (sum < height * height && (!hollow || sum > height * height - 2 * height)) {
                         final IBlockState blockToUse = (sum > height * height - 2 * height) ? block : fillBlock;
-                        if (shape == Shape.HALF_SPHERE || shape == Shape.SPHERE)
-                        {
+                        if (shape == Shape.HALF_SPHERE || shape == Shape.SPHERE) {
                             addPosToList(new BlockPos(x, y, z), blockToUse, posList);
                             addPosToList(new BlockPos(x, y, -z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, y, z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, y, -z), blockToUse, posList);
                         }
-                        if (shape == Shape.BOWL || shape == Shape.SPHERE)
-                        {
+                        if (shape == Shape.BOWL || shape == Shape.SPHERE) {
                             addPosToList(new BlockPos(x, -y, z), blockToUse, posList);
                             addPosToList(new BlockPos(x, -y, -z), blockToUse, posList);
                             addPosToList(new BlockPos(-x, -y, z), blockToUse, posList);
@@ -314,37 +247,28 @@ public final class Manager
             }
         }
         template.size = new BlockPos(height * 2, height * 2, height * 2);
-        template.blocks.addAll(posList.entrySet().stream().map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
+        template.blocks.addAll(posList.entrySet().stream()
+                .map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
     }
 
     /**
      * Generates a cube with the specific size and adds it to the template provided.
      *
-     * @param template the provided template.
-     * @param height   the height.
-     * @param width    the width.
-     * @param block    the block to use.
+     * @param template  the provided template.
+     * @param height    the height.
+     * @param width     the width.
+     * @param block     the block to use.
      * @param fillBlock the fill block.
-     * @param hollow   if full.
+     * @param hollow    if full.
      */
-    private static void generateCylinder(
-      final Template template,
-      final int height,
-      final int width,
-      final IBlockState block,
-      final IBlockState fillBlock,
-      final boolean hollow)
-    {
+    private static void generateCylinder(final Template template, final int height, final int width,
+            final IBlockState block, final IBlockState fillBlock, final boolean hollow) {
         final Map<BlockPos, IBlockState> posList = new HashMap<>();
-        for (int x = 0; x < width; x++)
-        {
-            for (int z = 0; z < width; z++)
-            {
-                for (int y = 0; y < height; y++)
-                {
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < width; z++) {
+                for (int y = 0; y < height; y++) {
                     int sum = x * x + z * z;
-                    if (sum < (width * width) / 4 && (!hollow || sum > (width * width) / 4 - width))
-                    {
+                    if (sum < (width * width) / 4 && (!hollow || sum > (width * width) / 4 - width)) {
                         final IBlockState blockToUse = (sum > (width * width) / 4 - width) ? block : fillBlock;
                         addPosToList(new BlockPos(x, y, z), blockToUse, posList);
                         addPosToList(new BlockPos(x, y, -z), blockToUse, posList);
@@ -356,7 +280,8 @@ public final class Manager
         }
 
         template.size = new BlockPos(width, height, width);
-        template.blocks.addAll(posList.entrySet().stream().map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
+        template.blocks.addAll(posList.entrySet().stream()
+                .map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
     }
 
     /**
@@ -368,24 +293,14 @@ public final class Manager
      * @param length   the length.
      * @param block    the block to use.
      */
-    private static void generateWave(
-      final Template template,
-      final int height,
-      final int width,
-      final int length,
-      final int frequency,
-      final IBlockState block,
-      final boolean flat)
-    {
+    private static void generateWave(final Template template, final int height, final int width, final int length,
+            final int frequency, final IBlockState block, final boolean flat) {
         final Map<BlockPos, IBlockState> posList = new HashMap<>();
-        for (int x = 0; x < length; x++)
-        {
-            for (int z = 0; z < width; z++)
-            {
+        for (int x = 0; x < length; x++) {
+            for (int z = 0; z < width; z++) {
                 final double yVal = (flat ? 0 : z) + (double) frequency * Math.sin(x / (double) height);
                 addPosToList(new BlockPos(x, yVal, z), block, posList);
-                if (!flat)
-                {
+                if (!flat) {
                     addPosToList(new BlockPos(x, yVal, -z), block, posList);
                     addPosToList(new BlockPos(x, yVal + width - 1, z - width + 1), block, posList);
                     addPosToList(new BlockPos(x, yVal + width - 1, -z + width - 1), block, posList);
@@ -394,41 +309,40 @@ public final class Manager
         }
 
         template.size = new BlockPos(length, height * length + 1, width * 2 + 1);
-        template.blocks.addAll(posList.entrySet().stream().map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
+        template.blocks.addAll(posList.entrySet().stream()
+                .map(pos -> new Template.BlockInfo(pos.getKey(), pos.getValue(), null)).collect(Collectors.toList()));
     }
 
-    public static void generateRandomShape(final Template template, final int height, final int width, final int length)
-    {
+    public static void generateRandomShape(final Template template, final int height, final int width,
+            final int length) {
         final double radiusX = 20;
         final double radiusY = 26;
         final double radiusZ = 5;
         final List<Tuple<BlockPos, IBlockState>> posList = new ArrayList<>();
 
-        for (double x = 0; x <= radiusX; x++)
-        {
-            for (double y = 0; y <= radiusY; y++)
-            {
-                for (double z = 0; z <= radiusZ; z++)
-                {
+        for (double x = 0; x <= radiusX; x++) {
+            for (double y = 0; y <= radiusY; y++) {
+                for (double z = 0; z <= radiusZ; z++) {
 
                 }
             }
         }
 
-        template.blocks.addAll(posList.stream().map(pos -> new Template.BlockInfo(pos.getFirst(), pos.getSecond(), null)).collect(Collectors.toList()));
+        template.blocks
+                .addAll(posList.stream().map(pos -> new Template.BlockInfo(pos.getFirst(), pos.getSecond(), null))
+                        .collect(Collectors.toList()));
     }
 
     /**
      * Add the position to list if not already.
      *
-     * @param blockPos the pos to add.
+     * @param blockPos   the pos to add.
      * @param blockToUse the block to use.
-     * @param posList  the list to add it to.
+     * @param posList    the list to add it to.
      */
-    private static void addPosToList(final BlockPos blockPos, final IBlockState blockToUse, final Map<BlockPos, IBlockState> posList)
-    {
-        if (!posList.containsKey(blockPos))
-        {
+    private static void addPosToList(final BlockPos blockPos, final IBlockState blockToUse,
+            final Map<BlockPos, IBlockState> posList) {
+        if (!posList.containsKey(blockPos)) {
             posList.put(blockPos, blockToUse);
         }
     }
@@ -438,13 +352,11 @@ public final class Manager
      *
      * @param player the player who made it.
      */
-    public static void undo(final EntityPlayer player)
-    {
+    public static void undo(final EntityPlayer player) {
         final Iterable<ChangeStorage> iterable = () -> changeQueue.iterator();
         final Stream<ChangeStorage> storageStream = StreamSupport.stream(iterable.spliterator(), false);
         final Optional<ChangeStorage> theStorage = storageStream.filter(storage -> storage.isOwner(player)).findFirst();
-        if (theStorage.isPresent())
-        {
+        if (theStorage.isPresent()) {
             addToQueue(new ScanToolOperation(theStorage.get(), player));
             changeQueue.remove(theStorage.get());
         }
@@ -455,10 +367,8 @@ public final class Manager
      *
      * @return the server Universal Unique ID for ther
      */
-    public static UUID getServerUUID()
-    {
-        if (serverUUID == null)
-        {
+    public static UUID getServerUUID() {
+        if (serverUUID == null) {
             return generateOrRetrieveUUID();
         }
         return serverUUID;
@@ -469,15 +379,12 @@ public final class Manager
      *
      * @return the UUID.
      */
-    private static UUID generateOrRetrieveUUID()
-    {
+    private static UUID generateOrRetrieveUUID() {
         final MapStorage storage = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getMapStorage();
         UUIDStorage instance = (UUIDStorage) storage.getOrLoadData(UUIDStorage.class, UUIDStorage.DATA_NAME);
 
-        if (instance == null)
-        {
-            if (serverUUID == null)
-            {
+        if (instance == null) {
+            if (serverUUID == null) {
                 Manager.setServerUUID(UUID.randomUUID());
                 Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
             }
@@ -491,8 +398,7 @@ public final class Manager
      *
      * @param uuid the universal unique id
      */
-    public static void setServerUUID(final UUID uuid)
-    {
+    public static void setServerUUID(final UUID uuid) {
         serverUUID = uuid;
     }
 
@@ -501,8 +407,7 @@ public final class Manager
      *
      * @return True if a new schematic have been received.
      */
-    public static boolean isSchematicDownloaded()
-    {
+    public static boolean isSchematicDownloaded() {
         return schematicDownloaded;
     }
 
@@ -511,8 +416,7 @@ public final class Manager
      *
      * @param downloaded True if a new schematic have been received.
      */
-    public static void setSchematicDownloaded(final boolean downloaded)
-    {
+    public static void setSchematicDownloaded(final boolean downloaded) {
         schematicDownloaded = downloaded;
     }
 }

@@ -1,17 +1,15 @@
-package com.structurize.api.util;
+package com.ldtteam.structurize.api.util;
 
 /**
  * Useful math stuff to use statically.
  */
-public final class MathUtils
-{
+public final class MathUtils {
     private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
 
     /**
      * Private constructor to hide the public one.
      */
-    private MathUtils()
-    {
+    private MathUtils() {
 
     }
 
@@ -21,8 +19,7 @@ public final class MathUtils
      * @param nanoSeconds as input.
      * @return nanoSeconds to seconds.
      */
-    public static long nanoSecondsToSeconds(final long nanoSeconds)
-    {
+    public static long nanoSecondsToSeconds(final long nanoSeconds) {
         return nanoSeconds / NANO_TIME_DIVIDER;
     }
 }

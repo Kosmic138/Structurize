@@ -1,4 +1,4 @@
-package com.structurize.coremod.repomanagement.repostructure;
+package com.ldtteam.structurize.repomanagement.repostructure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,7 @@ import net.minecraft.util.ResourceLocation;
  * <p>
  * Is the root element of structurize's styles list
  */
-public class Style
-{
+public class Style {
     // Info variables
     private final String id;
     private final String name;
@@ -27,14 +26,14 @@ public class Style
     /**
      * Path to local root
      */
-    private       String localPath = "";
+    private String localPath = "";
 
-    /** 
+    /**
      * ID of base style
      */
     private final String base;
 
-    /** 
+    /**
      * List of subtype
      */
     protected List<Head> heads = new ArrayList<Head>();
@@ -42,18 +41,9 @@ public class Style
     /**
      * Creates new style
      */
-    public Style(
-        final String id,
-        final String name,
-        final String description,
-        final String image,
-        final ResourceLocation origin,
-        final String joke,
-        final String author,
-        final String base,
-        final String shortname
-        )
-    {
+    public Style(final String id, final String name, final String description, final String image,
+            final ResourceLocation origin, final String joke, final String author, final String base,
+            final String shortname) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -66,84 +56,76 @@ public class Style
     }
 
     // Subtype management
-    
-    public void addHead(final Head head)
-    {
+
+    public void addHead(final Head head) {
         heads.add(head);
     }
 
-    public void setHead(final int i, final Head head)
-    {
+    public void setHead(final int i, final Head head) {
         heads.set(i, head);
     }
 
     /**
      * @return found Head or null
      */
-    public Head getHeadById(final String headId)
-    {
-        for (Head head : heads)
-        {
-            if (head.getId().equals(headId))
-            {
+    public Head getHeadById(final String headId) {
+        for (Head head : heads) {
+            if (head.getId().equals(headId)) {
                 return head;
             }
         }
         return null;
     }
-    
-    public List<Head> getHeads()
-    {
+
+    public List<Head> getHeads() {
         return heads;
     }
 
     // Casual setters
 
-    public void setLocalPath(final String localPath)
-    {
+    public void setLocalPath(final String localPath) {
         this.localPath = localPath;
     }
 
     // Casual getters
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
-    public String getName()
-    {
+
+    public String getName() {
         return name;
     }
-    public String getDescription()
-    {
+
+    public String getDescription() {
         return description;
     }
-    public String getImage()
-    {
+
+    public String getImage() {
         return image;
     }
-    public ResourceLocation getOrigin()
-    {
+
+    public ResourceLocation getOrigin() {
         return origin;
     }
-    public String getJoke()
-    {
+
+    public String getJoke() {
         return joke;
     }
-    public String getAuthor()
-    {
+
+    public String getAuthor() {
         return author;
     }
-    public String getBase()
-    {
+
+    public String getBase() {
         return base;
     }
-    public String getLocalPath()
-    {
+
+    public String getLocalPath() {
         return localPath;
     }
-    public String getShortame()
-    {
+
+    public String getShortame() {
         return shortname.isEmpty() ? name : shortname;
     }
 }

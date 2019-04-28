@@ -1,1 +1,1 @@
-package com.structurize.coremod.repomanagement.repostructure;
+package com.ldtteam.structurize.repomanagement.repostructure;

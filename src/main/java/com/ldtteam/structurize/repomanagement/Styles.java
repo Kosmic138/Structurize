@@ -1,14 +1,13 @@
-package com.structurize.coremod.repomanagement;
+package com.ldtteam.structurize.repomanagement;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.structurize.coremod.repomanagement.repostructure.Style;
+import com.ldtteam.structurize.repomanagement.repostructure.Style;
 
 import net.minecraft.client.Minecraft;
 
-public class Styles
-{
+public class Styles {
     private static List<Style> styles = new ArrayList<Style>();
 
     /**
@@ -19,50 +18,41 @@ public class Styles
     /**
      * Private constructor to hide implicit public one.
      */
-    protected Styles()
-    {
+    protected Styles() {
         /*
          * Intentionally left empty.
          */
     }
 
-    public void addStyle(final Style style)
-    {
+    public void addStyle(final Style style) {
         styles.add(style);
     }
 
-    public void setStyle(final int i, final Style style)
-    {
+    public void setStyle(final int i, final Style style) {
         styles.set(i, style);
     }
 
-    public Style getStyleById(final String id)
-    {
+    public Style getStyleById(final String id) {
         return styles.stream().filter(style -> style.getId().equals(id)).findFirst().orElse(null);
     }
 
-    public Style getStyleByName(final String name)
-    {
+    public Style getStyleByName(final String name) {
         final Style result = styles.stream().filter(style -> style.getName().equals(name)).findFirst().orElse(null);
-        if (result == null)
-        {
+        if (result == null) {
             return styles.stream().filter(style -> style.getShortame().equals(name)).findFirst().orElse(null);
         }
         return result;
     }
 
-    public List<Style> getStyles()
-    {
+    public List<Style> getStyles() {
         return styles;
     }
 
-    public void setDownloadFolder(final String downloadFolder)
-    {
-        this.downloadFolder = downloadFolder;
+    public void setDownloadFolder(final String downloadFolderIn) {
+        downloadFolder = downloadFolderIn;
     }
 
-    public String getDownloadFolder()
-    {
+    public String getDownloadFolder() {
         return Minecraft.getMinecraft().gameDir + "/" + downloadFolder;
     }
 }

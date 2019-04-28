@@ -1,8 +1,8 @@
 package com.ldtteam.structurize.network.messages;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.structmanagement.StructureName;
-import com.ldtteam.structurize.structmanagement.Structures;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.ldtteam.structurize.util.StructureUtils;
@@ -17,30 +17,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Send build tool data to the server. Verify the data on the server side and then place the building.
+ * Send build tool data to the server. Verify the data on the server side and
+ * then place the building.
  */
-public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
-{
+public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage> {
     private boolean complete;
-    private String                   structureName;
-    private String                   workOrderName;
-    private int                      rotation;
-    private BlockPos                 pos;
-    private boolean                  isHut;
-    private boolean                  mirror;
+    private String structureName;
+    private String workOrderName;
+    private int rotation;
+    private BlockPos pos;
+    private boolean isHut;
+    private boolean mirror;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public BuildToolPasteMessage()
-    {
+    public BuildToolPasteMessage() {
         super();
     }
 
     /**
-     * Create the building that was made with the build tool.
-     * Item in inventory required
-     *  @param structureName String representation of a structure
+     * Create the building that was made with the build tool. Item in inventory
+     * required
+     * 
+     * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
@@ -49,12 +49,9 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param complete      paste it complete (with structure blocks) or without.
      * @param freeMode      the free mode type.
      */
-    public BuildToolPasteMessage(
-      final String structureName,
-      final String workOrderName, final BlockPos pos,
-      final Rotation rotation, final boolean isHut,
-      final Mirror mirror, final boolean complete, final WindowBuildTool.FreeMode freeMode)
-    {
+    public BuildToolPasteMessage(final String structureName, final String workOrderName, final BlockPos pos,
+            final Rotation rotation, final boolean isHut, final Mirror mirror, final boolean complete,
+            final WindowBuildTool.FreeMode freeMode) {
         super();
         this.structureName = structureName;
         this.workOrderName = workOrderName;
@@ -71,8 +68,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
-    {
+    public void fromBytes(@NotNull final ByteBuf buf) {
         structureName = ByteBufUtils.readUTF8String(buf);
         workOrderName = ByteBufUtils.readUTF8String(buf);
 
@@ -93,8 +89,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
-    {
+    public void toBytes(@NotNull final ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, structureName);
         ByteBufUtils.writeUTF8String(buf, workOrderName);
 
@@ -112,19 +107,18 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player)
-    {
+    public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player) {
         final StructureName sn = new StructureName(message.structureName);
-        if (!Structures.hasMD5(sn))
-        {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+        if (!Structures.hasMD5(sn)) {
+            player.sendMessage(
+                    new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
 
-        if (player.capabilities.isCreativeMode)
-        {
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-              message.pos, Rotation.values()[message.rotation], message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete, player);
+        if (player.capabilities.isCreativeMode) {
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.world, message.structureName, message.pos,
+                    Rotation.values()[message.rotation], message.mirror ? Mirror.FRONT_BACK : Mirror.NONE,
+                    message.complete, player);
         }
     }
 }

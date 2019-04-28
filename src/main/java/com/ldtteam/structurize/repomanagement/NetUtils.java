@@ -1,4 +1,4 @@
-package com.structurize.coremod.repomanagement;
+package com.ldtteam.structurize.repomanagement;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,17 +9,15 @@ import java.net.URL;
 import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
 
-import com.structurize.api.util.Log;
+import com.ldtteam.structurize.api.util.Log;
 
 import org.apache.commons.io.FileUtils;
 
-public class NetUtils
-{
+public class NetUtils {
     /**
      * Private constructor to hide implicit public one.
      */
-    private NetUtils()
-    {
+    private NetUtils() {
         /*
          * Intentionally left empty.
          */
@@ -35,12 +33,11 @@ public class NetUtils
             URL url = new URL(https_url);
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
-            ret = new BufferedReader(new InputStreamReader(con.getInputStream())).lines().collect(Collectors.joining(" "));
-        }
-        catch (MalformedURLException e) {
+            ret = new BufferedReader(new InputStreamReader(con.getInputStream())).lines()
+                    .collect(Collectors.joining(" "));
+        } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -50,14 +47,10 @@ public class NetUtils
     /**
      * HTTPS GET METHOD schematic getter
      */
-    public static void schematicHttpsGet(final String https_url, final String pathToSave)
-    {
-        try
-        {
+    public static void schematicHttpsGet(final String https_url, final String pathToSave) {
+        try {
             FileUtils.copyURLToFile(new URL(https_url), new File(pathToSave));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.getLogger().warn("Failed to get: " + https_url);
         }
     }

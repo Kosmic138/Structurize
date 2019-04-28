@@ -1,6 +1,6 @@
 package com.ldtteam.structurize.network.messages;
 
-import com.ldtteam.structurize.structmanagement.Manager;
+import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -12,27 +12,23 @@ import java.util.UUID;
 /**
  * Class handling the Server UUID Message.
  */
-public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessage>
-{
+public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessage> {
     private UUID serverUUID;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public ServerUUIDMessage()
-    {
+    public ServerUUIDMessage() {
         super();
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
-    {
+    public void fromBytes(@NotNull final ByteBuf buf) {
         serverUUID = PacketUtils.readUUID(buf);
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
-    {
+    public void toBytes(@NotNull final ByteBuf buf) {
         PacketUtils.writeUUID(buf, Manager.getServerUUID());
     }
 
@@ -45,8 +41,7 @@ public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessa
      * @param ctx     Context
      */
     @Override
-    protected void messageOnClientThread(final ServerUUIDMessage message, final MessageContext ctx)
-    {
+    protected void messageOnClientThread(final ServerUUIDMessage message, final MessageContext ctx) {
         Manager.setServerUUID(message.serverUUID);
     }
 }

@@ -1,9 +1,9 @@
-package com.structurize.coremod.placementhandlers;
+package com.ldtteam.structurize.placementhandlers;
 
-import com.structurize.api.compatibility.candb.ChiselAndBitsCheck;
-import com.structurize.api.util.BlockUtils;
-import com.structurize.api.util.ItemStackUtils;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
+import com.ldtteam.structurize.api.compatibility.candb.ChiselAndBitsCheck;
+import com.ldtteam.structurize.api.util.BlockUtils;
+import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,27 +15,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.structurize.api.util.constant.Constants.UPDATE_FLAG;
-import static com.structurize.coremod.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
-import static com.structurize.coremod.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
+import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
+import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Contains all Structurize specific placement handlers.
  */
-public final class StructurizePlacementHandlers
-{
+public final class StructurizePlacementHandlers {
     /**
      * Private constructor to hide implicit one.
      */
-    private StructurizePlacementHandlers()
-    {
+    private StructurizePlacementHandlers() {
         /*
          * Intentionally left empty.
          */
     }
 
-    public static void initHandlers()
-    {
+    public static void initHandlers() {
         PlacementHandlers.handlers.clear();
         PlacementHandlers.handlers.add(new PlacementHandlers.AirPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FirePlacementHandler());
@@ -51,36 +48,24 @@ public final class StructurizePlacementHandlers
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 
-
-    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
-    {
+    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler {
         @Override
-        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
-        {
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState) {
             return blockState.getBlock() instanceof BlockSolidSubstitution;
         }
 
         @Override
-        public Object handle(
-          @NotNull final World world,
-          @NotNull final BlockPos pos,
-          @NotNull final IBlockState blockState,
-          @Nullable final NBTTagCompound tileEntityData,
-          final boolean complete,
-          final BlockPos centerPos)
-        {
+        public Object handle(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData,
+                final boolean complete, final BlockPos centerPos) {
             final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-            if (complete)
-            {
-                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-                {
+            if (complete) {
+                if (!world.setBlockState(pos, blockState, UPDATE_FLAG)) {
                     return ActionProcessingResult.DENY;
                 }
-            }
-            else
-            {
-                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG))
-                {
+            } else {
+                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG)) {
                     return ActionProcessingResult.DENY;
                 }
             }
@@ -89,8 +74,9 @@ public final class StructurizePlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
-        {
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData,
+                final boolean complete) {
             final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(newBlockState));
@@ -98,47 +84,38 @@ public final class StructurizePlacementHandlers
         }
     }
 
-    public static class GeneralBlockPlacementHandler implements IPlacementHandler
-    {
+    public static class GeneralBlockPlacementHandler implements IPlacementHandler {
         @Override
-        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
-        {
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState) {
             return true;
         }
 
         @Override
-        public Object handle(
-          @NotNull final World world,
-          @NotNull final BlockPos pos,
-          @NotNull final IBlockState blockState,
-          @Nullable final NBTTagCompound tileEntityData,
-          final boolean complete,
-          final BlockPos centerPos)
-        {
-            if (world.getBlockState(pos).equals(blockState))
-            {
+        public Object handle(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData,
+                final boolean complete, final BlockPos centerPos) {
+            if (world.getBlockState(pos).equals(blockState)) {
                 return ActionProcessingResult.ACCEPT;
             }
 
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-            {
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG)) {
                 return ActionProcessingResult.DENY;
             }
 
-            if (tileEntityData != null)
-            {
-               handleTileEntityPlacement(tileEntityData, world, pos);
+            if (tileEntityData != null) {
+                handleTileEntityPlacement(tileEntityData, world, pos);
             }
 
             return blockState;
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
-        {
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos,
+                @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData,
+                final boolean complete) {
             final List<ItemStack> itemList = new ArrayList<>();
-            if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
-            {
+            if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)) {
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             }
             itemList.addAll(getItemsFromTileEntity(tileEntityData, world));

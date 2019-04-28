@@ -7,9 +7,9 @@ import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.structmanagement.Manager;
-import com.ldtteam.structurize.structmanagement.StructureName;
-import com.ldtteam.structurize.structmanagement.Structures;
+import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.BuildToolPasteMessage;
 import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -43,15 +43,12 @@ import static com.ldtteam.structurize.api.util.constant.WindowConstants.*;
 /**
  * BuildTool window.
  */
-public class WindowBuildTool extends AbstractWindowSkeleton
-{
+public class WindowBuildTool extends AbstractWindowSkeleton {
     /**
      * Enum of possibly free blocks for the normal player.
      */
-    public enum FreeMode
-    {
-        SUPPLYSHIP,
-        SUPPLYCAMP
+    public enum FreeMode {
+        SUPPLYSHIP, SUPPLYCAMP
     }
 
     /**
@@ -74,7 +71,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * Drop down list for style.
      */
     private DropDownList stylesDropDownList;
-    
+
     /**
      * Drop down list for style.
      */
@@ -126,18 +123,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param rotation      the rotation.
      * @param mode          the mode.
      */
-    public WindowBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
-    {
+    public WindowBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation,
+            final WindowBuildTool.FreeMode mode) {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if (!hasPermission())
-        {
+        if (!hasPermission()) {
             return;
         }
-        
+
         this.init(pos);
-        if (pos != null)
-        {
+        if (pos != null) {
             Settings.instance.setupStaticMode(structureName, mode);
             staticSchematicName = structureName;
             Settings.instance.setRotation(rotation);
@@ -146,36 +141,31 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Creates a window build tool.
-     * This requires X, Y and Z coordinates.
-     * If a structure is active, recalculates the X Y Z with offset.
-     * Otherwise the given parameters are used.
+     * Creates a window build tool. This requires X, Y and Z coordinates. If a
+     * structure is active, recalculates the X Y Z with offset. Otherwise the given
+     * parameters are used.
      *
      * @param pos coordinate.
      */
-    public WindowBuildTool(@Nullable final BlockPos pos)
-    {
+    public WindowBuildTool(@Nullable final BlockPos pos) {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        if (!hasPermission())
-        {
+        if (!hasPermission()) {
             return;
         }
 
         this.init(pos);
     }
 
-    private void init(final BlockPos pos)
-    {
-        @Nullable final Structure structure = Settings.instance.getActiveStructure();
-        styles = Structurize.instance.getStyles().getStyles().stream().filter(styleA -> !styleA.getLocalPath().isEmpty()).collect(Collectors.toList());
+    private void init(final BlockPos pos) {
+        @Nullable
+        final Structure structure = Settings.instance.getActiveStructure();
+        styles = Structurize.instance.getStyles().getStyles().stream()
+                .filter(styleA -> !styleA.getLocalPath().isEmpty()).collect(Collectors.toList());
 
-        if (structure != null)
-        {
+        if (structure != null) {
             rotation = Settings.instance.getRotation();
-        }
-        else if (pos != null)
-        {
+        } else if (pos != null) {
             this.pos = pos;
             Settings.instance.setPosition(pos);
             Settings.instance.setRotation(0);
@@ -183,7 +173,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         initStylesNavigation();
 
-        //Register all necessary buttons with the window.
+        // Register all necessary buttons with the window.
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
@@ -205,33 +195,26 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
 
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             sections.add(Structures.SCHEMATICS_PREFIX);
             setStructureName(staticSchematicName);
-        }
-        else
-        {
+        } else {
             Structures.loadScannedStyleMaps();
 
             sections.clear();
             final InventoryPlayer inventory = this.mc.player.inventory;
             final List<String> allSections = Structures.getSections();
-            for (final String section : allSections)
-            {
-                if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
-                {
+            for (final String section : allSections) {
+                if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN)
+                        || inventoryHasHut(inventory, section)) {
                     sections.add(section);
                 }
             }
 
-            if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
-            {
+            if (Minecraft.getMinecraft().player.capabilities.isCreativeMode) {
                 findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
                 findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
-            }
-            else
-            {
+            } else {
                 findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(false);
                 findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(false);
             }
@@ -239,24 +222,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             setStructureName(Settings.instance.getStructureName());
         }
 
-        if (Manager.isSchematicDownloaded())
-        {
+        if (Manager.isSchematicDownloaded()) {
             Manager.setSchematicDownloaded(false);
             changeSchematic();
         }
     }
 
     // TODO REMOVE? IT'S ONLY LINK
-    public void pasteNice()
-    {
+    public void pasteNice() {
         paste(false);
     }
 
     /**
      * Paste a schematic in the world.
      */
-    private void pasteComplete()
-    {
+    private void pasteComplete() {
         paste(true);
     }
 
@@ -265,26 +245,20 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param complete if complete paste or partial.
      */
-    private void paste(final boolean complete)
-    {
+    private void paste(final boolean complete) {
         // ENDPOINT DOESN'T KNOW WHAT TO DO WITH NEW PATH
         final String sname;
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             sname = Settings.instance.getStaticSchematicName();
-        }
-        else
-        {
+        } else {
             sname = getPickedSchematicAsPath();
         }
         final StructureName structureName = new StructureName(sname);
-        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            //We need to check that the server have it too using the md5
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN)
+                && FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
+            // We need to check that the server have it too using the md5
             requestAndPlaceScannedSchematic(structureName, true, complete);
-        }
-        else
-        {
+        } else {
             paste(structureName, complete);
         }
         Settings.instance.softReset();
@@ -294,39 +268,33 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Drop down class for sections.
      */
-    private class SectionDropDownList implements DropDownList.DataProvider
-    {
+    private class SectionDropDownList implements DropDownList.DataProvider {
         @Override
-        public int getElementCount()
-        {
+        public int getElementCount() {
             return sections.size();
         }
 
         @Override
-        public String getLabel(final int index)
-        {
+        public String getLabel(final int index) {
             final String name = sections.get(index);
-            if (Structures.SCHEMATICS_SCAN.equals(name))
-            {
+            if (Structures.SCHEMATICS_SCAN.equals(name)) {
                 return LanguageHandler.format("com.ldtteam.structurize.gui.buildtool.scans");
-            }
-            else if (Structures.SCHEMATICS_PREFIX.equals(name))
-            {
+            } else if (Structures.SCHEMATICS_PREFIX.equals(name)) {
                 return LanguageHandler.format("com.ldtteam.structurize.gui.buildtool.decorations");
             }
-            //should be a something else.
+            // should be a something else.
             return getSectionName(name);
         }
     }
 
     /**
-     * Get the correct name for the section.
-     * Mods which need this should override this.
+     * Get the correct name for the section. Mods which need this should override
+     * this.
+     * 
      * @param name the initial name.
      * @return the formatted name.
      */
-    public String getSectionName(final String name)
-    {
+    public String getSectionName(final String name) {
         // TODO CAN'T GET THE MEANING OF THIS IN THE OLD WINDOW
         return name;
     }
@@ -334,8 +302,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Initialise the previous/next and drop down list for style.
      */
-    private void initStylesNavigation()
-    {
+    private void initStylesNavigation() {
         // BUTTONS
         registerButton(BUTTON_PREVIOUS_STYLE_ID, () -> {
             stylesDropDownList.selectPrevious();
@@ -365,79 +332,68 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         // DROPDOWNS
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLES_ID, DropDownList.class);
         stylesDropDownList.setHandler(this::onDropDownListChanged);
-        stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        stylesDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return styles.size();
             }
 
             @Override
-            public String getLabel(final int index)
-            {
+            public String getLabel(final int index) {
                 return styles.get(index).getShortame();
             }
         });
         stylesDropDownList.setSelectedIndex(0);
         headsDropDownList = findPaneOfTypeByID(DROPDOWN_HEADS_ID, DropDownList.class);
         headsDropDownList.setHandler(this::onDropDownListChanged);
-        headsDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        headsDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().size();
             }
 
             @Override
-            public String getLabel(final int index)
-            {
+            public String getLabel(final int index) {
                 return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(index).getName();
             }
         });
         headsDropDownList.setSelectedIndex(0);
         typesDropDownList = findPaneOfTypeByID(DROPDOWN_TYPES_ID, DropDownList.class);
         typesDropDownList.setHandler(this::onDropDownListChanged);
-        typesDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        typesDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
-                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(headsDropDownList.getSelectedIndex()).getTypes().size();
+            public int getElementCount() {
+                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads()
+                        .get(headsDropDownList.getSelectedIndex()).getTypes().size();
             }
 
             @Override
-            public String getLabel(final int index)
-            {
-                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(headsDropDownList.getSelectedIndex()).getTypes().get(index).getName();
+            public String getLabel(final int index) {
+                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads()
+                        .get(headsDropDownList.getSelectedIndex()).getTypes().get(index).getName();
             }
         });
         typesDropDownList.setSelectedIndex(0);
         filesDropDownList = findPaneOfTypeByID(DROPDOWN_FILES_ID, DropDownList.class);
         filesDropDownList.setHandler(this::onDropDownListChanged);
-        filesDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        filesDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
-                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(headsDropDownList.getSelectedIndex()).getTypes().get(typesDropDownList.getSelectedIndex()).getFiles().size();
+            public int getElementCount() {
+                return styles.get(stylesDropDownList.getSelectedIndex()).getHeads()
+                        .get(headsDropDownList.getSelectedIndex()).getTypes().get(typesDropDownList.getSelectedIndex())
+                        .getFiles().size();
             }
 
             @Override
-            public String getLabel(final int index)
-            {                
-                final Trinuple<String, String, String> file = styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(headsDropDownList.getSelectedIndex()).getTypes().get(typesDropDownList.getSelectedIndex()).getFiles().get(index);
-                if (file.getThird().equals(styles.get(stylesDropDownList.getSelectedIndex()).getId()))
-                {
+            public String getLabel(final int index) {
+                final Trinuple<String, String, String> file = styles.get(stylesDropDownList.getSelectedIndex())
+                        .getHeads().get(headsDropDownList.getSelectedIndex()).getTypes()
+                        .get(typesDropDownList.getSelectedIndex()).getFiles().get(index);
+                if (file.getThird().equals(styles.get(stylesDropDownList.getSelectedIndex()).getId())) {
                     return file.getSecond() + " §aS";
-                }
-                else if (file.getThird().equals(styles.get(stylesDropDownList.getSelectedIndex()).getBase()))
-                {
+                } else if (file.getThird().equals(styles.get(stylesDropDownList.getSelectedIndex()).getBase())) {
                     return file.getSecond() + " §eB";
-                }
-                else
-                {
+                } else {
                     return file.getSecond() + " §cD";
                 }
             }
@@ -448,50 +404,38 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Rotate the structure counter clockwise.
      */
-    private static void mirror()
-    {
+    private static void mirror() {
         Settings.instance.mirror();
     }
 
     /**
-     * Called when the window is opened.
-     * Sets up the buttons for either hut mode or decoration mode.
+     * Called when the window is opened. Sets up the buttons for either hut mode or
+     * decoration mode.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
-        if (!hasPermission())
-        {
+        if (!hasPermission()) {
             close();
             return;
         }
 
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             setStructureName(staticSchematicName);
-        }
-        else
-        {
+        } else {
             // Structures.loadScannedStyleMaps();
-            /* TODO ADD BUILDINGS SELECTOR
-            final InventoryPlayer inventory = this.mc.player.inventory;
-            final List<String> allSections = Structures.getSections();
-            for (final String section : allSections)
-            {
-                if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
-                {
-                    sections.add(section);
-                }
-            }
-            */
-            if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
-            {
+            /*
+             * TODO ADD BUILDINGS SELECTOR final InventoryPlayer inventory =
+             * this.mc.player.inventory; final List<String> allSections =
+             * Structures.getSections(); for (final String section : allSections) { if
+             * (section.equals(Structures.SCHEMATICS_PREFIX) ||
+             * section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory,
+             * section)) { sections.add(section); } }
+             */
+            if (Minecraft.getMinecraft().player.capabilities.isCreativeMode) {
                 findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
                 findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
-            }
-            else
-            {
+            } else {
                 findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(false);
                 findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(false);
             }
@@ -501,30 +445,27 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        // TODO THIS IS DOWNLOADER FOR MISSING SCHEMATIC, SHOULD BE DONE AFTER CLIENT-SERVER HANDSHAKE AUTOMATICALLY
-        /*if (Manager.isSchematicDownloaded())
-        {
-            Manager.setSchematicDownloaded(false);
-            changeSchematic();
-        }*/
+        // TODO THIS IS DOWNLOADER FOR MISSING SCHEMATIC, SHOULD BE DONE AFTER
+        // CLIENT-SERVER HANDSHAKE AUTOMATICALLY
+        /*
+         * if (Manager.isSchematicDownloaded()) { Manager.setSchematicDownloaded(false);
+         * changeSchematic(); }
+         */
     }
 
     /**
-     * Called when the window is closed.
-     * If there is a current structure, its information is stored in {@link Settings}.
-     * Also updates state via {@link LSStructureDisplayerMessage}
+     * Called when the window is closed. If there is a current structure, its
+     * information is stored in {@link Settings}. Also updates state via
+     * {@link LSStructureDisplayerMessage}
      */
     @Override
-    public void onClosed()
-    {
-        if (Settings.instance.getActiveStructure() != null)
-        {
+    public void onClosed() {
+        if (Settings.instance.getActiveStructure() != null) {
             final ByteBuf buffer = Unpooled.buffer();
-            
+
             Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
             Settings.instance.toBytes(buffer);
             Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
@@ -538,66 +479,55 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Change to the next section, Builder, Citizen ... Decorations and Scan.
      */
-    private void nextSection()
-    {
+    private void nextSection() {
         sectionsDropDownList.selectNext();
     }
 
     /**
      * Change to the previous section, Builder, Citizen ... Decorations and Scan.
      */
-    private void previousSection()
-    {
+    private void previousSection() {
         sectionsDropDownList.selectPrevious();
     }
 
     /**
      * Change to the next style.
      */
-    private void nextStyle()
-    {
+    private void nextStyle() {
         stylesDropDownList.selectNext();
     }
 
     /**
      * Change to the previous style.
      */
-    private void previousStyle()
-    {
+    private void previousStyle() {
         stylesDropDownList.selectPrevious();
     }
 
     /**
      * Update the styles list but try to keep the same one.
      */
-    private void updateStyles()
-    {
+    private void updateStyles() {
         String currentStyle = "";
-        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size())
-        {
+        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size()) {
             currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
             Settings.instance.setStyle(currentStyle);
         }
         styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
 
-        if (currentStyle.isEmpty())
-        {
+        if (currentStyle.isEmpty()) {
             currentStyle = Settings.instance.getStyle();
         }
 
         int newIndex = styles.indexOf(currentStyle);
-        if (newIndex == -1)
-        {
+        if (newIndex == -1) {
             newIndex = 0;
         }
 
         final boolean enabled;
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             enabled = false;
-        }
-        else
-        {
+        } else {
             enabled = styles.size() > 1;
         }
 
@@ -614,65 +544,53 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Go to the next schematic.
      */
-    private void nextSchematic()
-    {
+    private void nextSchematic() {
         schematicsDropDownList.selectNext();
     }
 
     /**
      * Go to the previous schematic.
      */
-    private void previousSchematic()
-    {
+    private void previousSchematic() {
         schematicsDropDownList.selectPrevious();
     }
 
     /**
      * Update the list a available schematics.
      */
-    private void updateSchematics()
-    {
+    private void updateSchematics() {
         String schematic = "";
-        if (schematicsDropDownList.getSelectedIndex() > -1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
-        {
+        if (schematicsDropDownList.getSelectedIndex() > -1
+                && schematicsDropDownList.getSelectedIndex() < schematics.size()) {
             schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
         final String currentSchematic = schematic.isEmpty() ? "" : (new StructureName(schematic)).getSchematic();
         final String section = sections.get(sectionsDropDownList.getSelectedIndex());
         final String style = styles.get(stylesDropDownList.getSelectedIndex());
 
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             schematics = new ArrayList<>();
             schematics.add(staticSchematicName);
-        }
-        else
-        {
+        } else {
             schematics = Structures.getSchematicsFor(section, style);
         }
         int newIndex = -1;
-        for (int i = 0; i < schematics.size(); i++)
-        {
+        for (int i = 0; i < schematics.size(); i++) {
             final StructureName sn = new StructureName(schematics.get(i));
-            if (sn.getSchematic().equals(currentSchematic))
-            {
+            if (sn.getSchematic().equals(currentSchematic)) {
                 newIndex = i;
                 break;
             }
         }
 
-        if (newIndex == -1)
-        {
+        if (newIndex == -1) {
             newIndex = 0;
         }
 
         final boolean enabled;
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             enabled = false;
-        }
-        else
-        {
+        } else {
             enabled = schematics.size() > 1;
         }
 
@@ -687,65 +605,37 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param list the dropdown list which change
      */
-    private void onDropDownListChanged(final DropDownList list)
-    {
+    private void onDropDownListChanged(final DropDownList list) {
         // TODO THIS SHOULD HANDLE SCANS MANAGE BUTTON VISIBILITY (RENAME, DELETE)
-        /*if (list == filesDropDownList)
-        {
-            changeSchematic();
-        }*/
+        /*
+         * if (list == filesDropDownList) { changeSchematic(); }
+         */
     }
 
     /**
      * Set the structure name.
      *
-     * @param structureName name of the structure name
-     *                      Ex: schematics/wooden/Builder2
+     * @param structureName name of the structure name Ex:
+     *                      schematics/wooden/Builder2
      */
-    private void setStructureName(final String structureName)
-    {
-        /* TODO INPUT IS NOT IN THE NEW FORMAT
-        if (structureName != null)
-        {
-            final StructureName sn = new StructureName(structureName);
-            final int sectionIndex = sections.indexOf(sn.getSection());
-            if (sectionIndex != -1)
-            {
-                sectionsDropDownList.setSelectedIndex(sectionIndex);
-                final int styleIndex = styles.indexOf(sn.getStyle());
-                if (styleIndex != -1)
-                {
-                    stylesDropDownList.setSelectedIndex(styleIndex);
-                    final int schematicIndex = schematics.indexOf(sn.toString());
-                    if (schematicIndex != -1)
-                    {
-                        schematicsDropDownList.setSelectedIndex(schematicIndex);
-                    }
-                    else
-                    {
-                        schematicsDropDownList.setSelectedIndex(0);
-                    }
-                }
-                else
-                {
-                    stylesDropDownList.setSelectedIndex(0);
-
-                }
-            }
-            else
-            {
-                sectionsDropDownList.setSelectedIndex(0);
-            }
-        }
-        else
-        {
-            sectionsDropDownList.setSelectedIndex(0);
-            final int styleIndex = styles.indexOf(Settings.instance.getStyle());
-            if (styleIndex != -1)
-            {
-                stylesDropDownList.setSelectedIndex(styleIndex);
-            }
-        }*/
+    private void setStructureName(final String structureName) {
+        /*
+         * TODO INPUT IS NOT IN THE NEW FORMAT if (structureName != null) { final
+         * StructureName sn = new StructureName(structureName); final int sectionIndex =
+         * sections.indexOf(sn.getSection()); if (sectionIndex != -1) {
+         * sectionsDropDownList.setSelectedIndex(sectionIndex); final int styleIndex =
+         * styles.indexOf(sn.getStyle()); if (styleIndex != -1) {
+         * stylesDropDownList.setSelectedIndex(styleIndex); final int schematicIndex =
+         * schematics.indexOf(sn.toString()); if (schematicIndex != -1) {
+         * schematicsDropDownList.setSelectedIndex(schematicIndex); } else {
+         * schematicsDropDownList.setSelectedIndex(0); } } else {
+         * stylesDropDownList.setSelectedIndex(0);
+         * 
+         * } } else { sectionsDropDownList.setSelectedIndex(0); } } else {
+         * sectionsDropDownList.setSelectedIndex(0); final int styleIndex =
+         * styles.indexOf(Settings.instance.getStyle()); if (styleIndex != -1) {
+         * stylesDropDownList.setSelectedIndex(styleIndex); } }
+         */
     }
 
     /**
@@ -755,9 +645,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param hut       the hut.
      * @return true if so.
      */
-    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
-    {
-        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MINECOLONIES_MOD_ID + HUT_PREFIX + hut)));
+    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut) {
+        return inventory
+                .hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MINECOLONIES_MOD_ID + HUT_PREFIX + hut)));
     }
 
     /*
@@ -767,56 +657,49 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Move the schematic up.
      */
-    private static void moveUpClicked()
-    {
+    private static void moveUpClicked() {
         Settings.instance.moveTo(new BlockPos(0, 1, 0));
     }
 
     /**
      * Move the structure down.
      */
-    private static void moveDownClicked()
-    {
+    private static void moveDownClicked() {
         Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
 
     /**
      * Move the structure left.
      */
-    private void moveLeftClicked()
-    {
+    private void moveLeftClicked() {
         Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
      * Move the structure right.
      */
-    private void moveRightClicked()
-    {
+    private void moveRightClicked() {
         Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
     }
 
     /**
      * Move the structure forward.
      */
-    private void moveForwardClicked()
-    {
+    private void moveForwardClicked() {
         Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
     }
 
     /**
      * Move the structure back.
      */
-    private void moveBackClicked()
-    {
+    private void moveBackClicked() {
         Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
     }
 
     /**
      * Rotate the structure clockwise.
      */
-    private void rotateRightClicked()
-    {
+    private void rotateRightClicked() {
         rotation = (rotation + ROTATE_ONCE) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
     }
@@ -824,32 +707,26 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Rotate the structure counter clockwise.
      */
-    private void rotateLeftClicked()
-    {
+    private void rotateLeftClicked() {
         rotation = (rotation + ROTATE_THREE_TIMES) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
     }
-
 
     /*
      * ---------------- Miscellaneous ----------------
      */
 
     /**
-     * Changes the current structure.
-     * Set to button position at that time
+     * Changes the current structure. Set to button position at that time
      */
-    private void changeSchematic()
-    {
-        if (!Settings.instance.isStaticSchematicMode())
-        {
+    private void changeSchematic() {
+        if (!Settings.instance.isStaticSchematicMode()) {
             Settings.instance.setStructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         }
 
         commonStructureUpdate();
 
-        if (Settings.instance.getPosition() == null)
-        {
+        if (Settings.instance.getPosition() == null) {
             Settings.instance.setPosition(this.pos);
         }
     }
@@ -857,49 +734,39 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Changes the current structure.
      */
-    public static void commonStructureUpdate()
-    {
+    public static void commonStructureUpdate() {
         final String sname;
 
-        if (Settings.instance.isStaticSchematicMode())
-        {
+        if (Settings.instance.isStaticSchematicMode()) {
             sname = Settings.instance.getStaticSchematicName();
-        }
-        else
-        {
+        } else {
             sname = Settings.instance.getStructureName();
         }
-        
-        if (sname == null)
-        {
+
+        if (sname == null) {
             return;
         }
 
         final StructureName structureName = new StructureName(sname);
         final String md5 = Structures.getMD5(structureName.toString());
         final Structure structure = new Structure(Minecraft.getMinecraft().world, structureName.toString(),
-            new PlacementSettings(Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation())));
+                new PlacementSettings(Settings.instance.getMirror(),
+                        BlockUtils.getRotation(Settings.instance.getRotation())));
 
-        if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
-        {
-            if (structure.isBluePrintMissing())
-            {
+        if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5)) {
+            if (structure.isBluePrintMissing()) {
                 Log.getLogger().info("Blueprint structure " + structureName + " missing");
-            }
-            else
-            {
+            } else {
                 Log.getLogger().info("structure " + structureName + " md5 error");
             }
 
             Log.getLogger().info("Request To Server for structure " + structureName);
-            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-            {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
                 Structurize.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
                 return;
-            }
-            else
-            {
-                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+            } else {
+                Log.getLogger().error(
+                        "WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
             }
         }
         Settings.instance.setStructureName(structureName.toString());
@@ -913,44 +780,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete      if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    public void requestAndPlaceScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
-    {
-        if (!Structures.isPlayerSchematicsAllowed())
-        {
+    public void requestAndPlaceScannedSchematic(@NotNull final StructureName structureName, final boolean paste,
+            final boolean complete) {
+        if (!Structures.isPlayerSchematicsAllowed()) {
             return;
         }
 
-        if (Structures.hasMD5(structureName))
-        {
+        if (Structures.hasMD5(structureName)) {
             final String md5 = Structures.getMD5(structureName.toString());
             final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
-            if (!Structures.hasMD5(new StructureName(serverSideName)))
-            {
+            if (!Structures.hasMD5(new StructureName(serverSideName))) {
                 final InputStream stream = StructureLoadingUtils.getStream(structureName.toString());
-                if (stream != null)
-                {
+                if (stream != null) {
                     final UUID id = UUID.randomUUID();
                     final byte[] structureAsByteArray = StructureLoadingUtils.getStreamAsByteArray(stream);
 
-                    if (structureAsByteArray.length <= MAX_MESSAGE_SIZE)
-                    {
+                    if (structureAsByteArray.length <= MAX_MESSAGE_SIZE) {
                         Structurize.getNetwork().sendToServer(new SchematicSaveMessage(structureAsByteArray, id, 1, 1));
-                    }
-                    else
-                    {
+                    } else {
                         final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
 
-                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
-                        for (int i = 1; i <= pieces; i++)
-                        {
+                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic "
+                                + structureName + "(md5:" + md5 + ") to the server");
+                        for (int i = 1; i <= pieces; i++) {
                             final int start = (i - 1) * MAX_MESSAGE_SIZE;
                             final int size;
-                            if (i == pieces)
-                            {
+                            if (i == pieces) {
                                 size = structureAsByteArray.length - (start);
-                            }
-                            else
-                            {
+                            } else {
                                 size = MAX_MESSAGE_SIZE;
                             }
                             final byte[] bytes = new byte[size];
@@ -958,41 +815,26 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                             Structurize.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
                         }
                     }
-                }
-                else
-                {
+                } else {
                     Log.getLogger().warn("BuildTool: Can not load " + structureName);
                 }
-            }
-            else
-            {
+            } else {
                 Log.getLogger().warn("BuildTool: server does not have " + serverSideName);
             }
 
-            if (paste || pasteDirectly())
-            {
-                Structurize.getNetwork().sendToServer(new BuildToolPasteMessage(
-                  serverSideName,
-                  structureName.toString(),
-                  Settings.instance.getPosition(),
-                  BlockUtils.getRotation(Settings.instance.getRotation()),
-                  false,
-                  Settings.instance.getMirror(),
-                  complete, null));
-            }
-            else
-            {
+            if (paste || pasteDirectly()) {
+                Structurize.getNetwork()
+                        .sendToServer(new BuildToolPasteMessage(serverSideName, structureName.toString(),
+                                Settings.instance.getPosition(),
+                                BlockUtils.getRotation(Settings.instance.getRotation()), false,
+                                Settings.instance.getMirror(), complete, null));
+            } else {
                 place(new StructureName(serverSideName));
             }
-        }
-        else
-        {
-            if (pasteDirectly())
-            {
+        } else {
+            if (pasteDirectly()) {
                 paste(structureName, complete);
-            }
-            else
-            {
+            } else {
                 place(structureName);
             }
             Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
@@ -1004,44 +846,33 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param structureName of the scan to be built.
      */
-    public static void requestScannedSchematic(@NotNull final StructureName structureName)
-    {
-        if (!Structures.isPlayerSchematicsAllowed())
-        {
+    public static void requestScannedSchematic(@NotNull final StructureName structureName) {
+        if (!Structures.isPlayerSchematicsAllowed()) {
             return;
         }
 
-        if (Structures.hasMD5(structureName))
-        {
+        if (Structures.hasMD5(structureName)) {
             final String md5 = Structures.getMD5(structureName.toString());
             final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
-            if (!Structures.hasMD5(new StructureName(serverSideName)))
-            {
+            if (!Structures.hasMD5(new StructureName(serverSideName))) {
                 final InputStream stream = StructureLoadingUtils.getStream(structureName.toString());
-                if (stream != null)
-                {
+                if (stream != null) {
                     final UUID id = UUID.randomUUID();
                     final byte[] structureAsByteArray = StructureLoadingUtils.getStreamAsByteArray(stream);
 
-                    if (structureAsByteArray.length <= MAX_MESSAGE_SIZE)
-                    {
+                    if (structureAsByteArray.length <= MAX_MESSAGE_SIZE) {
                         Structurize.getNetwork().sendToServer(new SchematicSaveMessage(structureAsByteArray, id, 1, 1));
-                    }
-                    else
-                    {
+                    } else {
                         final int pieces = structureAsByteArray.length / MAX_MESSAGE_SIZE;
 
-                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic " + structureName + "(md5:" + md5 + ") to the server");
-                        for (int i = 1; i <= pieces; i++)
-                        {
+                        Log.getLogger().info("BuilderTool: sending: " + pieces + " pieces with the schematic "
+                                + structureName + "(md5:" + md5 + ") to the server");
+                        for (int i = 1; i <= pieces; i++) {
                             final int start = (i - 1) * MAX_MESSAGE_SIZE;
                             final int size;
-                            if (i == pieces)
-                            {
+                            if (i == pieces) {
                                 size = structureAsByteArray.length - (start);
-                            }
-                            else
-                            {
+                            } else {
                                 size = MAX_MESSAGE_SIZE;
                             }
                             final byte[] bytes = new byte[size];
@@ -1049,38 +880,30 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                             Structurize.getNetwork().sendToServer(new SchematicSaveMessage(bytes, id, pieces, i));
                         }
                     }
-                }
-                else
-                {
+                } else {
                     Log.getLogger().warn("BuilderTool: Can not load " + structureName);
                 }
-            }
-            else
-            {
+            } else {
                 Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
             }
-        }
-        else
-        {
+        } else {
             Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
         }
     }
 
-
     /**
      * Override if place without paste is required.
+     * 
      * @param structureName the name.
      */
-    public void place(final StructureName structureName)
-    {
+    public void place(final StructureName structureName) {
 
     }
 
     /**
      * Override if check and place without paste is required.
      */
-    public void checkAndPlace()
-    {
+    public void checkAndPlace() {
 
     }
 
@@ -1089,68 +912,53 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @return true if so.
      */
-    public boolean hasPermission()
-    {
+    public boolean hasPermission() {
         return Minecraft.getMinecraft().player.capabilities.isCreativeMode;
     }
 
     /**
      * If a schematic should be pasted instantly.
+     * 
      * @return true if so.
      */
-    public boolean pasteDirectly()
-    {
+    public boolean pasteDirectly() {
         return true;
     }
 
     /**
      * Method to directly paste a structure.
-     * @param name the name of the structure.
+     * 
+     * @param name     the name of the structure.
      * @param complete if complete or not.
      */
-    public void paste(final StructureName name, final boolean complete)
-    {
-        Structurize.getNetwork().sendToServer(new BuildToolPasteMessage(
-          name.toString(),
-          name.toString(),
-          Settings.instance.getPosition(),
-          BlockUtils.getRotation(Settings.instance.getRotation()),
-          false,
-          Settings.instance.getMirror(),
-          complete, Settings.instance.getFreeMode()));
+    public void paste(final StructureName name, final boolean complete) {
+        Structurize.getNetwork()
+                .sendToServer(new BuildToolPasteMessage(name.toString(), name.toString(),
+                        Settings.instance.getPosition(), BlockUtils.getRotation(Settings.instance.getRotation()), false,
+                        Settings.instance.getMirror(), complete, Settings.instance.getFreeMode()));
     }
 
     /**
      * Send a packet telling the server to place the current structure.
      */
-    private void confirmClicked()
-    {
-        if (Settings.instance.isStaticSchematicMode() && Settings.instance.getActiveStructure() != null)
-        {
+    private void confirmClicked() {
+        if (Settings.instance.isStaticSchematicMode() && Settings.instance.getActiveStructure() != null) {
             checkAndPlace();
-        }
-        else
-        {
+        } else {
             final StructureName structureName = new StructureName(getPickedSchematicAsPath());
-            if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-            {
-                //We need to check that the server have it too using the md5
+            if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN)
+                    && FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
+                // We need to check that the server have it too using the md5
                 requestAndPlaceScannedSchematic(structureName, false, false);
-            }
-            else
-            {
-                if (pasteDirectly())
-                {
+            } else {
+                if (pasteDirectly()) {
                     paste(structureName, false);
-                }
-                else
-                {
+                } else {
                     place(structureName);
                 }
             }
 
-            if (!GuiScreen.isShiftKeyDown())
-            {
+            if (!GuiScreen.isShiftKeyDown()) {
                 cancelClicked();
             }
         }
@@ -1159,8 +967,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Cancel the current structure.
      */
-    public void cancelClicked()
-    {
+    public void cancelClicked() {
         Settings.instance.softReset();
         Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(Unpooled.buffer(), false));
         close();
@@ -1171,27 +978,24 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param rotation the rotation to be set.
      */
-    private static void updateRotation(final int rotation)
-    {
+    private static void updateRotation(final int rotation) {
         final PlacementSettings settings = new PlacementSettings();
-        switch (rotation)
-        {
-            case ROTATE_ONCE:
-                settings.setRotation(Rotation.CLOCKWISE_90);
-                break;
-            case ROTATE_TWICE:
-                settings.setRotation(Rotation.CLOCKWISE_180);
-                break;
-            case ROTATE_THREE_TIMES:
-                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
-                break;
-            default:
-                settings.setRotation(Rotation.NONE);
+        switch (rotation) {
+        case ROTATE_ONCE:
+            settings.setRotation(Rotation.CLOCKWISE_90);
+            break;
+        case ROTATE_TWICE:
+            settings.setRotation(Rotation.CLOCKWISE_180);
+            break;
+        case ROTATE_THREE_TIMES:
+            settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
+            break;
+        default:
+            settings.setRotation(Rotation.NONE);
         }
         Settings.instance.setRotation(rotation);
         settings.setMirror(Settings.instance.getMirror());
-        if (Settings.instance.getActiveStructure() != null)
-        {
+        if (Settings.instance.getActiveStructure() != null) {
             Settings.instance.getActiveStructure().setPlacementSettings(settings);
         }
     }
@@ -1199,23 +1003,24 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Action performed when rename button is clicked.
      */
-    private void renameClicked()
-    {
+    private void renameClicked() {
         final StructureName structureName = new StructureName(getPickedSchematicAsPath());
-        @NotNull final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
+        @NotNull
+        final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
         window.open();
     }
 
     /**
      * Action performed when rename button is clicked.
      */
-    private void deleteClicked()
-    {
+    private void deleteClicked() {
         confirmDeleteDialog = new DialogDoneCancel(getWindow());
         confirmDeleteDialog.setHandler(this::onDialogClosed);
-        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final StructureName structureName = new StructureName(
+                schematics.get(schematicsDropDownList.getSelectedIndex()));
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.gui.structure.delete.title"));
-        confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.gui.structure.delete.body", structureName.toString()));
+        confirmDeleteDialog.setTextContent(
+                LanguageHandler.format("com.minecolonies.gui.structure.delete.body", structureName.toString()));
         confirmDeleteDialog.open();
     }
 
@@ -1225,57 +1030,38 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param dialog   which is being closed.
      * @param buttonId is the id of the button used to close the dialog.
      */
-    public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)
-    {
-        /* RENAME NOW WORKS DIFFERENTLY
-        if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
-        {
-            final StructureName structureName = new StructureName(getPickedSchematicAsPath());
-            if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix())
-                  && Structures.deleteScannedStructure(structureName))
-            {
-                Structures.loadScannedStyleMaps();
-                if (schematics.size() > 1)
-                {
-                    schematicsDropDownList.selectNext();
-                    stylesDropDownList.setSelectedIndex(stylesDropDownList.getSelectedIndex());
-                }
-                else if (styles.size() > 1)
-                {
-                    stylesDropDownList.selectNext();
-                }
-                else
-                {
-                    sectionsDropDownList.selectNext();
-                }
-            }
-        }
-        */
+    public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId) {
+        /*
+         * RENAME NOW WORKS DIFFERENTLY if (dialog == confirmDeleteDialog && buttonId ==
+         * DialogDoneCancel.DONE) { final StructureName structureName = new
+         * StructureName(getPickedSchematicAsPath()); if
+         * (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()) &&
+         * Structures.deleteScannedStructure(structureName)) {
+         * Structures.loadScannedStyleMaps(); if (schematics.size() > 1) {
+         * schematicsDropDownList.selectNext();
+         * stylesDropDownList.setSelectedIndex(stylesDropDownList.getSelectedIndex()); }
+         * else if (styles.size() > 1) { stylesDropDownList.selectNext(); } else {
+         * sectionsDropDownList.selectNext(); } } }
+         */
     }
 
     /**
      * Action performed when rename button is clicked.
      */
-    private void manageStylesClicked()
-    {
+    private void manageStylesClicked() {
         windowManageStyles = new WindowManageStyles(getWindow());
         windowManageStyles.open();
     }
 
-    private String getPickedSchematicAsPath()
-    {
-        final String fileId = styles.get(stylesDropDownList.getSelectedIndex())
-                                    .getHeads().get(headsDropDownList.getSelectedIndex())
-                                    .getTypes().get(typesDropDownList.getSelectedIndex())
-                                    .getFiles().get(filesDropDownList.getSelectedIndex())
-                                    .getFirst();
-        Log.getLogger().info(styles.get(stylesDropDownList.getSelectedIndex())
-        .getHeads().get(headsDropDownList.getSelectedIndex())
-        .getTypes().get(typesDropDownList.getSelectedIndex())
-        .getFilePathById(fileId));
-        return styles.get(stylesDropDownList.getSelectedIndex())
-                     .getHeads().get(headsDropDownList.getSelectedIndex())
-                     .getTypes().get(typesDropDownList.getSelectedIndex())
-                     .getFilePathById(fileId);
+    private String getPickedSchematicAsPath() {
+        final String fileId = styles.get(stylesDropDownList.getSelectedIndex()).getHeads()
+                .get(headsDropDownList.getSelectedIndex()).getTypes().get(typesDropDownList.getSelectedIndex())
+                .getFiles().get(filesDropDownList.getSelectedIndex()).getFirst();
+        Log.getLogger()
+                .info(styles.get(stylesDropDownList.getSelectedIndex()).getHeads()
+                        .get(headsDropDownList.getSelectedIndex()).getTypes().get(typesDropDownList.getSelectedIndex())
+                        .getFilePathById(fileId));
+        return styles.get(stylesDropDownList.getSelectedIndex()).getHeads().get(headsDropDownList.getSelectedIndex())
+                .getTypes().get(typesDropDownList.getSelectedIndex()).getFilePathById(fileId);
     }
 }

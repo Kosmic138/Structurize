@@ -1,10 +1,13 @@
 package com.ldtteam.structurize;
 
+import com.ldtteam.structurize.api.configuration.Configurations;
 import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.commands.StructurizeCommand;
 import com.ldtteam.structurize.compat.optifine.OptifineCompat;
-import com.ldtteam.structurize.structmanagement.Structures;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.repomanagement.FileManager;
+import com.ldtteam.structurize.repomanagement.Styles;
 import com.ldtteam.structurize.network.messages.*;
 import com.ldtteam.structurize.proxy.IProxy;
 import com.ldtteam.structurize.util.BackUpHelper;

@@ -3,7 +3,7 @@ package com.ldtteam.structurize.network.messages;
 import com.ldtteam.structurize.api.configuration.Configurations;
 import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.structmanagement.Structures;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.StructureUtils;
 import com.ldtteam.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
@@ -21,12 +21,11 @@ import static com.ldtteam.structurize.api.util.constant.Constants.MAX_AMOUNT_OF_
 /**
  * Save Schematic Message.
  */
-public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, IMessage>
-{
+public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, IMessage> {
     /**
      * The schematic data.
      */
-    private              byte[] data           = null;
+    private byte[] data = null;
 
     /**
      * The amount of pieces.
@@ -46,8 +45,7 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     /**
      * Public standard constructor.
      */
-    public SchematicSaveMessage()
-    {
+    public SchematicSaveMessage() {
         super();
     }
 
@@ -58,13 +56,13 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
      */
     /**
      * Send a schematic between client and server or server and client.
-     * @param data the schematic.
-     * @param id the unique id.
+     * 
+     * @param data   the schematic.
+     * @param id     the unique id.
      * @param pieces the amount of pieces.
-     * @param piece the current piece.
+     * @param piece  the current piece.
      */
-    public SchematicSaveMessage(final byte[] data, final UUID id, final int pieces, final int piece)
-    {
+    public SchematicSaveMessage(final byte[] data, final UUID id, final int pieces, final int piece) {
         super();
         this.data = data.clone();
         this.id = id;
@@ -73,8 +71,7 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
-    {
+    public void fromBytes(@NotNull final ByteBuf buf) {
         final int length = buf.readInt();
         final byte[] compressedData = new byte[length];
         buf.readBytes(compressedData);
@@ -85,11 +82,9 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
-    {
+    public void toBytes(@NotNull final ByteBuf buf) {
         final byte[] compressedData = StructureUtils.compress(data);
-        if (compressedData != null)
-        {
+        if (compressedData != null) {
             buf.capacity(compressedData.length + buf.writerIndex());
             buf.writeInt(compressedData.length);
             buf.writeBytes(compressedData);
@@ -100,57 +95,46 @@ public class SchematicSaveMessage extends AbstractMessage<SchematicSaveMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final SchematicSaveMessage message, final EntityPlayerMP player)
-    {
-        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) //TODO: local schematics
+    public void messageOnServerThread(final SchematicSaveMessage message, final EntityPlayerMP player) {
+        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) // TODO: local schematics
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
             return;
         }
 
-        if(message.pieces > MAX_AMOUNT_OF_PIECES)
-        {
+        if (message.pieces > MAX_AMOUNT_OF_PIECES) {
             Log.getLogger().error("Schematic has more than 10 pieces, discarding.");
             player.sendMessage(new TextComponentString("Schematic has more than 10 pieces, that's too big!"));
             return;
         }
 
         final boolean schematicSent;
-        if (message.data == null)
-        {
+        if (message.data == null) {
             Log.getLogger().error("Received empty schematic file");
             schematicSent = false;
-        }
-        else
-        {
-            schematicSent = Structures.handleSaveSchematicMessage(message.data, message.id, message.pieces, message.piece);
+        } else {
+            schematicSent = Structures.handleSaveSchematicMessage(message.data, message.id, message.pieces,
+                    message.piece);
         }
 
-        if (schematicSent)
-        {
+        if (schematicSent) {
             player.sendMessage(new TextComponentString("Schematic successfully sent!"));
-        }
-        else
-        {
+        } else {
             player.sendMessage(new TextComponentString("Failed to send the Schematic!"));
         }
     }
 
     @Override
-    protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx)
-    {
-        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) //TODO: local schematics
+    protected void messageOnClientThread(final SchematicSaveMessage message, final MessageContext ctx) {
+        if (!Structurize.isClient() && !Configurations.allowLocalSchematics) // TODO: local schematics
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
         }
 
-        if (message.data == null)
-        {
+        if (message.data == null) {
             Log.getLogger().error("Received empty schematic file");
-        }
-        else
-        {
+        } else {
             Structures.handleSaveSchematicMessage(message.data);
         }
     }

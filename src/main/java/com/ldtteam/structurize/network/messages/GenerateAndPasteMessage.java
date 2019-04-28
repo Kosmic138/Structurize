@@ -2,7 +2,7 @@ package com.ldtteam.structurize.network.messages;
 
 import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.ldtteam.structurize.api.util.Shape;
-import com.ldtteam.structurize.structmanagement.Manager;
+import com.ldtteam.structurize.management.Manager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to request a shape from the server.
  */
-public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMessage, IMessage>
-{
+public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMessage, IMessage> {
     /**
      * If hollow or not.
      */
@@ -81,8 +80,7 @@ public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMes
     /**
      * Empty constructor used when registering the message.
      */
-    public GenerateAndPasteMessage()
-    {
+    public GenerateAndPasteMessage() {
         super();
     }
 
@@ -102,20 +100,9 @@ public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMes
      * @param rotation  the rotation of it.
      * @param mirror    its mirror.
      */
-    public GenerateAndPasteMessage(
-      @NotNull final BlockPos pos,
-      final int length,
-      final int width,
-      final int height,
-      final int frequency,
-      final String equation,
-      final Shape shape,
-      final ItemStack block,
-      final ItemStack block2,
-      final boolean hollow,
-      final Rotation rotation,
-      final Mirror mirror)
-    {
+    public GenerateAndPasteMessage(@NotNull final BlockPos pos, final int length, final int width, final int height,
+            final int frequency, final String equation, final Shape shape, final ItemStack block,
+            final ItemStack block2, final boolean hollow, final Rotation rotation, final Mirror mirror) {
         super();
         this.pos = pos;
         this.length = length;
@@ -132,8 +119,7 @@ public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMes
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
-    {
+    public void fromBytes(@NotNull final ByteBuf buf) {
         pos = BlockPosUtil.readFromByteBuf(buf);
         length = buf.readInt();
         width = buf.readInt();
@@ -149,8 +135,7 @@ public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMes
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
-    {
+    public void toBytes(@NotNull final ByteBuf buf) {
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(length);
         buf.writeInt(width);
@@ -166,26 +151,13 @@ public class GenerateAndPasteMessage extends AbstractMessage<GenerateAndPasteMes
     }
 
     @Override
-    public void messageOnServerThread(final GenerateAndPasteMessage message, final EntityPlayerMP player)
-    {
-        if (!player.capabilities.isCreativeMode)
-        {
+    public void messageOnServerThread(final GenerateAndPasteMessage message, final EntityPlayerMP player) {
+        if (!player.capabilities.isCreativeMode) {
             return;
         }
 
-        Manager.pasteStructure(player.getServerWorld(),
-          message.pos,
-          message.width,
-          message.length,
-          message.height,
-          message.frequency,
-          message.equation,
-          message.shape,
-          message.block,
-          message.block2,
-          message.hollow,
-          player,
-          message.mirror ? Mirror.FRONT_BACK : Mirror.NONE,
-          Rotation.values()[message.rotation]);
+        Manager.pasteStructure(player.getServerWorld(), message.pos, message.width, message.length, message.height,
+                message.frequency, message.equation, message.shape, message.block, message.block2, message.hollow,
+                player, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, Rotation.values()[message.rotation]);
     }
 }
