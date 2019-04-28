@@ -6,7 +6,7 @@ import com.structurize.api.util.constant.Constants;
 import com.structurize.blockout.Log;
 import com.structurize.coremod.Structurize;
 import com.structurize.coremod.items.ModItems;
-import com.structurize.coremod.management.Manager;
+import com.structurize.coremod.structmanagement.Manager;
 import com.structurize.coremod.network.messages.StructurizeStylesMessage;
 import com.structurize.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.block.Block;
@@ -38,56 +38,49 @@ import static com.structurize.api.util.constant.NbtTagConstants.FIRST_POS_STRING
  * Event handler used to catch various forge events.
  */
 @Mod.EventBusSubscriber
-public class FMLEventHandler
-{
+public class FMLEventHandler {
     /**
-     * Called when a player logs in. If the joining player is a MP-Player, sends
-     * all possible styles in a message.
+     * Called when a player logs in. If the joining player is a MP-Player, sends all
+     * possible styles in a message.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
      */
     @SubscribeEvent
-    public void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (event.player instanceof EntityPlayerMP)
-        {
+    public void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.player instanceof EntityPlayerMP) {
             Structurize.getNetwork().sendTo(new ServerUUIDMessage(), (EntityPlayerMP) event.player);
             Structurize.getNetwork().sendTo(new StructurizeStylesMessage(), (EntityPlayerMP) event.player);
         }
     }
-    
+
     /**
      * Called when the config is changed, used to synch between file and game.
      *
      * @param event the on config changed event.
      */
     @SubscribeEvent
-    public void onConfigChanged(@NotNull final ConfigChangedEvent.OnConfigChangedEvent event)
-    {
+    public void onConfigChanged(@NotNull final ConfigChangedEvent.OnConfigChangedEvent event) {
         ConfigManager.sync(Constants.MOD_ID, Config.Type.INSTANCE);
     }
 
-
     /**
-     * Event when a block is broken.
-     * Event gets cancelled when there no permission to break a hut.
+     * Event when a block is broken. Event gets cancelled when there no permission
+     * to break a hut.
      *
      * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
     @SubscribeEvent
-    public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
-    {
-        if (event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
-        {
+    public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event) {
+        if (event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool) {
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
-            if (!itemstack.hasTagCompound())
-            {
+            if (!itemstack.hasTagCompound()) {
                 itemstack.setTagCompound(new NBTTagCompound());
             }
             final NBTTagCompound compound = itemstack.getTagCompound();
 
             BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, event.getPos());
-            LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
+            LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(),
+                    event.getPos().getY(), event.getPos().getZ());
             itemstack.setTagCompound(compound);
 
             event.setCanceled(true);
@@ -95,10 +88,8 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        if (event.world.isRemote)
-        {
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event) {
+        if (event.world.isRemote) {
             return;
         }
         Manager.onWorldTick((WorldServer) event.world);

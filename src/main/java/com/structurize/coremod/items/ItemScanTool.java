@@ -19,8 +19,8 @@ import com.structurize.api.util.Utils;
 import com.structurize.coremod.Structurize;
 import com.structurize.coremod.client.gui.WindowScan;
 import com.structurize.coremod.creativetab.ModCreativeTabs;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.StructureName;
+import com.structurize.coremod.structmanagement.Structures;
 import com.structurize.coremod.network.messages.SaveScanMessage;
 import com.structurize.structures.blueprints.v1.Blueprint;
 import com.structurize.structures.blueprints.v1.BlueprintUtil;
@@ -42,13 +42,11 @@ import net.minecraft.world.World;
 /**
  * Item used to scan structures.
  */
-public class ItemScanTool extends AbstractItemStructurize
-{
+public class ItemScanTool extends AbstractItemStructurize {
     /**
      * Creates instance of item.
      */
-    public ItemScanTool()
-    {
+    public ItemScanTool() {
         super("scepterSteel");
 
         super.setCreativeTab(ModCreativeTabs.STRUCTURIZE);
@@ -56,36 +54,31 @@ public class ItemScanTool extends AbstractItemStructurize
     }
 
     @Override
-    public float getDestroySpeed(final ItemStack stack, final IBlockState state)
-    {
+    public float getDestroySpeed(final ItemStack stack, final IBlockState state) {
         return Float.MAX_VALUE;
     }
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, @NotNull final EnumHand hand)
-    {
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn,
+            @NotNull final EnumHand hand) {
         final ItemStack stack = playerIn.getHeldItem(hand);
-        if (!stack.hasTagCompound())
-        {
+        if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
         final NBTTagCompound compound = stack.getTagCompound();
 
-        @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
-        @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, SECOND_POS_STRING);
+        @NotNull
+        final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
+        @NotNull
+        final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, SECOND_POS_STRING);
 
-        if (!worldIn.isRemote)
-        {
-            if (playerIn.isSneaking())
-            {
+        if (!worldIn.isRemote) {
+            if (playerIn.isSneaking()) {
                 saveStructure(worldIn, pos1, pos2, playerIn, null);
             }
-        }
-        else
-        {
-            if (!playerIn.isSneaking())
-            {
+        } else {
+            if (!playerIn.isSneaking()) {
                 final WindowScan window = new WindowScan(pos1, pos2);
                 window.open();
             }
@@ -96,31 +89,23 @@ public class ItemScanTool extends AbstractItemStructurize
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(
-      final EntityPlayer playerIn,
-      final World worldIn,
-      final BlockPos pos,
-      final EnumHand hand,
-      final EnumFacing facing,
-      final float hitX,
-      final float hitY,
-      final float hitZ)
-    {
+    public EnumActionResult onItemUse(final EntityPlayer playerIn, final World worldIn, final BlockPos pos,
+            final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ) {
         final ItemStack stack = playerIn.getHeldItem(hand);
-        if (!stack.hasTagCompound())
-        {
+        if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
         final NBTTagCompound compound = stack.getTagCompound();
 
-        @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
-        @NotNull final BlockPos pos2 = pos;
-        if (pos2.distanceSq(pos1) > 0)
-        {
+        @NotNull
+        final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, FIRST_POS_STRING);
+        @NotNull
+        final BlockPos pos2 = pos;
+        if (pos2.distanceSq(pos1) > 0) {
             BlockPosUtil.writeToNBT(compound, SECOND_POS_STRING, pos2);
-            if (worldIn.isRemote)
-            {
-                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2", pos.getX(), pos.getY(), pos.getZ());
+            if (worldIn.isRemote) {
+                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2", pos.getX(), pos.getY(),
+                        pos.getZ());
             }
 
             stack.setTagCompound(compound);
@@ -138,15 +123,14 @@ public class ItemScanTool extends AbstractItemStructurize
      * @param player causing this action.
      * @param name   the name of it.
      */
-    public static void saveStructure(@NotNull final World world, @NotNull final BlockPos from, @NotNull final BlockPos to, @NotNull final EntityPlayer player, final String name)
-    {
-        final BlockPos blockpos =
-          new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        final BlockPos blockpos1 =
-          new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+    public static void saveStructure(@NotNull final World world, @NotNull final BlockPos from,
+            @NotNull final BlockPos to, @NotNull final EntityPlayer player, final String name) {
+        final BlockPos blockpos = new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()),
+                Math.min(from.getZ(), to.getZ()));
+        final BlockPos blockpos1 = new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()),
+                Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
-        {
+        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE) {
             LanguageHandler.sendPlayerMessage(player, MAX_SCHEMATIC_SIZE_REACHED, MAX_SCHEMATIC_SIZE);
             return;
         }
@@ -154,72 +138,63 @@ public class ItemScanTool extends AbstractItemStructurize
         final long currentMillis = System.currentTimeMillis();
         final String currentMillisString = Long.toString(currentMillis);
         final String fileName;
-        if (name == null || name.isEmpty())
-        {
+        if (name == null || name.isEmpty()) {
             fileName = LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString);
-        }
-        else
-        {
+        } else {
             fileName = name;
         }
 
-        final Blueprint bp = BlueprintUtil.createBlueprint(world, blockpos, (short) size.getX(), (short) size.getY(), (short) size.getZ(), name);
-        Structurize.getNetwork().sendTo(
-          new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName), (EntityPlayerMP) player);
+        final Blueprint bp = BlueprintUtil.createBlueprint(world, blockpos, (short) size.getX(), (short) size.getY(),
+                (short) size.getZ(), name);
+        Structurize.getNetwork().sendTo(new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName),
+                (EntityPlayerMP) player);
     }
 
     /**
      * Save a structure on the server.
+     * 
      * @param world the world.
-     * @param from the start position.
-     * @param to the end position.
-     * @param name the name.
+     * @param from  the start position.
+     * @param to    the end position.
+     * @param name  the name.
      * @return true if succesful.
      */
-    public static boolean saveStructureOnServer(@NotNull final World world, @NotNull final BlockPos from, @NotNull final BlockPos to, final String name)
-    {
-        final BlockPos blockpos =
-          new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        final BlockPos blockpos1 =
-          new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+    public static boolean saveStructureOnServer(@NotNull final World world, @NotNull final BlockPos from,
+            @NotNull final BlockPos to, final String name) {
+        final BlockPos blockpos = new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()),
+                Math.min(from.getZ(), to.getZ()));
+        final BlockPos blockpos1 = new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()),
+                Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE)
-        {
+        if (size.getX() * size.getY() * size.getZ() > MAX_SCHEMATIC_SIZE) {
             Log.getLogger().warn("Saving too large schematic for:" + name);
         }
 
         final String prefix = "cache";
         final String fileName;
-        if (name == null || name.isEmpty())
-        {
+        if (name == null || name.isEmpty()) {
             fileName = LanguageHandler.format("item.scepterSteel.scanFormat");
-        }
-        else
-        {
+        } else {
             fileName = name;
         }
 
         final StructureName structureName = new StructureName(prefix, "backup", fileName);
 
         final List<File> folder = Structure.getCachedSchematicsFolders();
-        if (folder == null || folder.isEmpty())
-        {
+        if (folder == null || folder.isEmpty()) {
             Log.getLogger().warn("Unable to save schematic in cache since no folder was found.");
             return false;
         }
 
-        final Blueprint bp = BlueprintUtil.createBlueprint(world, blockpos, (short) size.getX(), (short) size.getY(), (short) size.getZ(), name);
-
+        final Blueprint bp = BlueprintUtil.createBlueprint(world, blockpos, (short) size.getX(), (short) size.getY(),
+                (short) size.getZ(), name);
 
         final File file = new File(folder.get(0), structureName.toString() + Structures.SCHEMATIC_EXTENSION_NEW);
         Utils.checkDirectory(file.getParentFile());
 
-        try (OutputStream outputstream = new FileOutputStream(file))
-        {
-        	CompressedStreamTools.writeCompressed(BlueprintUtil.writeBlueprintToNBT(bp), outputstream);
-        }
-        catch (Exception e)
-        {
+        try (OutputStream outputstream = new FileOutputStream(file)) {
+            CompressedStreamTools.writeCompressed(BlueprintUtil.writeBlueprintToNBT(bp), outputstream);
+        } catch (Exception e) {
             return false;
         }
         return true;

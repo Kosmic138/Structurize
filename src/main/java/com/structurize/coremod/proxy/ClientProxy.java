@@ -20,8 +20,8 @@ import com.structurize.coremod.client.gui.WindowShapeTool;
 import com.structurize.coremod.commands.UpdateSchematics;
 import com.structurize.coremod.event.ClientEventHandler;
 import com.structurize.coremod.items.ModItems;
-import com.structurize.coremod.management.Manager;
-import com.structurize.coremod.management.Structures;
+import com.structurize.coremod.structmanagement.Manager;
+import com.structurize.coremod.structmanagement.Structures;
 import com.structurize.structures.client.TemplateBlockInfoTransformHandler;
 import com.structurize.structures.event.RenderEventHandler;
 import com.structurize.structures.helpers.Settings;
@@ -54,22 +54,19 @@ import net.minecraftforge.fml.relauncher.Side;
  * Client side proxy.
  */
 @Mod.EventBusSubscriber(Side.CLIENT)
-public class ClientProxy extends CommonProxy
-{
+public class ClientProxy extends CommonProxy {
     /**
      * Inventory description string.
      */
     private static final String INVENTORY = "inventory";
 
     @Override
-    public boolean isClient()
-    {
+    public boolean isClient() {
         return true;
     }
 
     @Override
-    public void registerEvents()
-    {
+    public void registerEvents() {
         super.registerEvents();
 
         MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
@@ -79,75 +76,67 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(@Nullable final BlockPos pos)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
+    public void openBuildToolWindow(@Nullable final BlockPos pos) {
+        if (pos == null && Settings.instance.getActiveStructure() == null) {
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        @Nullable
+        final WindowBuildTool window = new WindowBuildTool(pos);
         window.open();
     }
 
     @Override
-    public void openShapeToolWindow(@Nullable final BlockPos pos)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
+    public void openShapeToolWindow(@Nullable final BlockPos pos) {
+        if (pos == null && Settings.instance.getActiveStructure() == null) {
             return;
         }
 
-        @Nullable final WindowShapeTool window = new WindowShapeTool(pos);
+        @Nullable
+        final WindowShapeTool window = new WindowShapeTool(pos);
         window.open();
     }
 
     @Override
-    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2)
-    {
-        if (pos1 == null || pos2 == null)
-        {
+    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2) {
+        if (pos1 == null || pos2 == null) {
             return;
         }
 
-        @Nullable final WindowScan window = new WindowScan(pos1, pos2);
+        @Nullable
+        final WindowScan window = new WindowScan(pos1, pos2);
         window.open();
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation) {
+        if (pos == null && Settings.instance.getActiveStructure() == null) {
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, null);
+        @Nullable
+        final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, null);
         window.open();
     }
 
     /**
      * Creates a custom model ResourceLocation for a block with metadata 0
      */
-    private static void createCustomModel(final Block block)
-    {
+    private static void createCustomModel(final Block block) {
         final Item item = Item.getItemFromBlock(block);
-        if (item != null)
-        {
+        if (item != null) {
             ModelLoader.setCustomModelResourceLocation(item, 0,
-              new ModelResourceLocation(block.getRegistryName(), INVENTORY));
+                    new ModelResourceLocation(block.getRegistryName(), INVENTORY));
         }
     }
 
     /**
      * Creates a custom model ResourceLocation for an item with metadata 0
      */
-    private static void createCustomModel(final Item item)
-    {
-        if (item != null)
-        {
+    private static void createCustomModel(final Item item) {
+        if (item != null) {
             ModelLoader.setCustomModelResourceLocation(item, 0,
-              new ModelResourceLocation(item.getRegistryName(), INVENTORY));
+                    new ModelResourceLocation(item.getRegistryName(), INVENTORY));
         }
     }
 
@@ -157,8 +146,7 @@ public class ClientProxy extends CommonProxy
      * @param event the forge pre ModelRegistryEvent event.
      */
     @SubscribeEvent
-    public static void registerModels(@NotNull final ModelRegistryEvent event)
-    {
+    public static void registerModels(@NotNull final ModelRegistryEvent event) {
         createCustomModel(ModBlocks.blockSubstitution);
 
         createCustomModel(ModBlocks.blockSolidSubstitution);
@@ -180,84 +168,97 @@ public class ClientProxy extends CommonProxy
         // Achievement proxy Items
         createCustomModel(ModBlocks.blockShingleSlab);
 
-        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
-        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
+        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor,
+                new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
+        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall,
+                new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()),
+                                INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleBirch), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleBirch), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()),
+                                INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSpruce), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSpruce), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()),
+                                INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleJungle), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleJungle), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()),
+                                INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleDarkOak), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleDarkOak), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()),
+                                INVENTORY));
 
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleAcacia), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
+        ModelLoader
+                .setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleAcacia), 0,
+                        new ModelResourceLocation(
+                                new ResourceLocation(Constants.MOD_ID,
+                                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()),
+                                INVENTORY));
 
-        for (final PaperwallType type : PaperwallType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
-              new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
+        for (final PaperwallType type : PaperwallType.values()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall),
+                    type.getMetadata(), new ModelResourceLocation(
+                            ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
 
-        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
-        {
+        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
-                        new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
+                    new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
         }
 
         createCustomModel(ModBlocks.multiBlock);
 
-        //Additionally we register an exclusion handler here;
+        // Additionally we register an exclusion handler here;
         TemplateBlockInfoTransformHandler.getInstance().AddTransformHandler(
-          (b) -> b.blockState.getBlock() == ModBlocks.blockSubstitution,
-          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
-        );
+                (b) -> b.blockState.getBlock() == ModBlocks.blockSubstitution,
+                (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null));
 
-        //Additionally we register an exclusion handler here;
+        // Additionally we register an exclusion handler here;
         TemplateBlockInfoTransformHandler.getInstance().AddTransformHandler(
-          (b) -> b.blockState.getBlock() == ModBlocks.blockSolidSubstitution,
-          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
-        );
-
+                (b) -> b.blockState.getBlock() == ModBlocks.blockSolidSubstitution,
+                (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null));
 
     }
 
     @Override
-    public File getSchematicsFolder()
-    {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            if (Manager.getServerUUID() != null)
-            {
+    public File getSchematicsFolder() {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
+            if (Manager.getServerUUID() != null) {
                 return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + Manager.getServerUUID());
-            }
-            else
-            {
+            } else {
                 Log.getLogger().error("Manager.getServerUUID() => null this should not happen");
                 return null;
             }
         }
 
         // if the world schematics folder exists we use it
-        // otherwise we use the minecraft folder  /structurize/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory() + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
+        // otherwise we use the minecraft folder /structurize/schematics if on the
+        // physical client on the logical server
+        final File worldSchematicFolder = new File(
+                FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory() + "/" + Constants.MOD_ID
+                        + '/' + Structures.SCHEMATICS_PREFIX);
 
-        if (!worldSchematicFolder.exists())
-        {
+        if (!worldSchematicFolder.exists()) {
             return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID);
         }
 
@@ -266,17 +267,14 @@ public class ClientProxy extends CommonProxy
 
     @Nullable
     @Override
-    public World getWorldFromMessage(@NotNull final MessageContext context)
-    {
+    public World getWorldFromMessage(@NotNull final MessageContext context) {
         return context.getClientHandler().world;
     }
 
     @Nullable
     @Override
-    public World getWorld(final int dimension)
-    {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-        {
+    public World getWorld(final int dimension) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             return super.getWorld(dimension);
         }
         return Minecraft.getMinecraft().world;
@@ -284,10 +282,8 @@ public class ClientProxy extends CommonProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
-    {
-        if (player instanceof EntityPlayerSP)
-        {
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player) {
+        if (player instanceof EntityPlayerSP) {
             return ((EntityPlayerSP) player).getRecipeBook();
         }
 
@@ -295,9 +291,9 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openMultiBlockWindow(@Nullable final BlockPos pos)
-    {
-        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
+    public void openMultiBlockWindow(@Nullable final BlockPos pos) {
+        @Nullable
+        final WindowMultiBlock window = new WindowMultiBlock(pos);
         window.open();
     }
 }
