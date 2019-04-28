@@ -41,9 +41,16 @@ configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+configurations {
+    contained {
+        transitive = false
+    }
+}
+
 dependencies {
-    deobfCompile "com.ldtteam:blockout:${config.minecraft_version}-${config.blockout_version}"
-    compile "mod.chiselsandbits:chiselsandbits:${config.c_b_version}"
+
+    contained "org.mariuszgromada.math:MathParser.org-mXparser:4.0.0"
+    compile "org.mariuszgromada.math:MathParser.org-mXparser:4.0.0"
 
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
@@ -58,7 +65,7 @@ dependencies {
     compile 'com.intellij:annotations:+@jar'
 }
 
-group = "com.structurize"
+group = "com.ldtteam"
 version = config.minecraft_version.toString() + "-" + System.getenv()["Version"]
 archivesBaseName = "structurize"
 
@@ -102,9 +109,17 @@ jar {
     from sourceSets.api.output
     from sourceSets.main.output
 
+    from(configurations.contained.files) {
+        include '*'
+        into 'META-INF/libraries'
+    }
+
     manifest {
-        attributes 'FMLAT': "structurize_at.cfg",
-        'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}"
+        attributes([
+                'ContainedDeps': configurations.contained.files.collect { it.name }.join(' '),
+                'FMLAT': "structurize_at.cfg",
+                'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}"
+        ])
     }
 }
 
@@ -129,10 +144,6 @@ artifacts {
     archives javadocJar
     archives apiJar
     archives sourceJar
-}
-
-javadoc {
-    source += sourceSets.api.allSource
 }
 
 idea {

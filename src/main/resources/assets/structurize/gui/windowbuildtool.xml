@@ -36,18 +36,18 @@
     <button id="rename" size="75 15" pos="293 20" label="Rename" visible="false"/>
     <button id="delete" size="75 15" pos="293 40" label="Delete" visible="false"/>
 
-    <view size="96 128" pos="162 100">
-        <buttonimage id="rotateLeft" source="structurize:textures/gui/buildtool/rotateleft.png" size="32 32" pos="0 0"/>
-        <buttonimage id="up" source="structurize:textures/gui/buildtool/up.png" size="32 32" pos="32 0"/>
-        <buttonimage id="rotateRight" source="structurize:textures/gui/buildtool/rotateright.png" size="32 32" pos="64 0"/>
-        <buttonimage id="left" source="structurize:textures/gui/buildtool/left.png" size="32 32" pos="0 32"/>
-        <buttonimage id="mirror" source="structurize:textures/gui/buildtool/mirror.png" size="32 32" pos="32 32"/>
-        <buttonimage id="right" source="structurize:textures/gui/buildtool/right.png" size="32 32" pos="64 32"/>
-        <buttonimage id="minus" source="structurize:textures/gui/buildtool/minus.png" size="32 32" pos="0 64"/>
-        <buttonimage id="down" source="structurize:textures/gui/buildtool/down.png" size="32 32" pos="32 64"/>
-        <buttonimage id="plus" source="structurize:textures/gui/buildtool/plus.png" size="32 32" pos="64 64"/>
-        <buttonimage id="confirm" source="structurize:textures/gui/buildtool/confirm.png" size="32 32" pos="0 96"/>
-        <buttonimage id="cancel" source="structurize:textures/gui/buildtool/cancel.png" size="32 32" pos="64 96"/>
+    <view size="96 128" pos="160 80">
+        <buttonimage id="rotateLeft" source="structurize:textures/gui/buildtool/rotateleft.png" size="32" pos="0 0"/>
+        <buttonimage id="up" source="structurize:textures/gui/buildtool/up.png" size="32" pos="32 0"/>
+        <buttonimage id="rotateRight" source="structurize:textures/gui/buildtool/rotateright.png" size="32" pos="64 0"/>
+        <buttonimage id="left" source="structurize:textures/gui/buildtool/left.png" size="32" pos="0 32"/>
+        <buttonimage id="mirror" source="structurize:textures/gui/buildtool/mirror.png" size="32" pos="32 32"/>
+        <buttonimage id="right" source="structurize:textures/gui/buildtool/right.png" size="32" pos="64 32"/>
+        <buttonimage id="minus" source="structurize:textures/gui/buildtool/minus.png" size="32" pos="0 64"/>
+        <buttonimage id="down" source="structurize:textures/gui/buildtool/down.png" size="32" pos="32 64"/>
+        <buttonimage id="plus" source="structurize:textures/gui/buildtool/plus.png" size="32" pos="64 64"/>
+        <buttonimage id="confirm" source="structurize:textures/gui/buildtool/confirm.png" size="32" pos="0 96"/>
+        <buttonimage id="cancel" source="structurize:textures/gui/buildtool/cancel.png" size="32" pos="64 96"/>
     </view>
 
     <button id="manageStyles" size="100 15" pos="14 213" label="Manage styles"/>

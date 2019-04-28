@@ -2,18 +2,18 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/structurize/blockout/blockOut.xsd">
 
-    <buttonimage label="$(com.structurize.coremod.gui.shapeTool.pickmainblock)" id="pickMainBlock" pos="24 3" size="86 17"
+    <buttonimage label="$(com.ldtteam.structurize.gui.shapeTool.pickmainblock)" id="pickMainBlock" pos="24 3" size="86 17"
                  source="structurize:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 
     <itemicon id="resourceIconMain" item="minecraft:gold_block" size="17 17" pos="59 20"/>
 
 
-    <buttonimage label="$(com.structurize.coremod.gui.shapeTool.pickfillblock)" id="pickFillBlock" pos="24 43" size="86 17"
+    <buttonimage label="$(com.ldtteam.structurize.gui.shapeTool.pickfillblock)" id="pickFillBlock" pos="24 43" size="86 17"
                  source="structurize:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 
     <itemicon id="resourceIconFill" item="minecraft:gold_block" size="17 17" pos="59 60"/>
 
-    <buttonimage label="$(com.structurize.coremod.gui.shapeTool.solid)" id="hollowShape" pos="24 83" size="86 17"
+    <buttonimage label="$(com.ldtteam.structurize.gui.shapeTool.solid)" id="hollowShape" pos="24 83" size="86 17"
                  source="structurize:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 
     <buttonimage id="previousShape" size="14 15" pos="140 3" label="&lt;"
@@ -31,11 +31,13 @@
     <label label="Width" id="widthLabel" size="20 20" pos="310 25"/>
     <label label="Length" id="lengthLabel" size="20 20" pos="304 50"/>
     <label label="Frequency" id="frequencyLabel" size="20 20" pos="306 75"/>
+    <label label="Shape" id="shapeLabel" size="20 20" pos="120 30"/>
 
     <input id="height" size="20 20" pos="340 1" maxlength="3"/>
     <input id="width" size="20 20" pos="340 25" maxlength="3"/>
     <input id="length" size="20 20" pos="340 50" maxlength="3"/>
     <input id="frequency" size="20 20" pos="340 75" maxlength="3"/>
+    <input id="shape" size="140 20" pos="160 30" maxlength="200"/>
 
     <view size="120 112" pos="160 80">
         <buttonimage id="rotateLeft" source="structurize:textures/gui/buildtool/rotateleft.png" size="32" pos="0 0"/>
